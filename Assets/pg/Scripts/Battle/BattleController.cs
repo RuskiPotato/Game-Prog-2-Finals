@@ -26,7 +26,7 @@ public class BattleController : MonoBehaviour {
     public Slider fateBar, suspicionBar;  // Max Value 1
     public TMP_Text tierText, maliceText, oddsText, audacityText, goldText,
                     heroText, enemyText, logText, gmText;
-    public Image[] diceSlots;             // 5 squares, each with a TMP_Text child
+    public DiceTray diceTray;            
     public Button attackBtn, defendBtn, loadedBtn, sleightBtn, bargainBtn,
                   acceptBtn, rerollBtn, continueBtn;
 
@@ -216,14 +216,8 @@ public class BattleController : MonoBehaviour {
             if (second.Lowest > lastRoll.Lowest) lastRoll = second;
         }
 
-        for (float t = 0; t < 0.6f; t += 0.06f) {    // cosmetic tumble: Unity's random, not the seeded stream
-            for (int i = 0; i < diceSlots.Length; i++) SetDie(i, i < n ? Random.Range(1, 21) : -1, false);
-            yield return new WaitForSeconds(0.06f);
-        }
-        for (int i = 0; i < diceSlots.Length; i++) {
-            bool lowest = i < n && lastRoll.Dice[i] == lastRoll.Lowest;
-            SetDie(i, i < n ? lastRoll.Dice[i] : -1, lowest);
-        }
+        yield return diceTray.Tumble(n); 
+        diceTray.ShowRoll(lastRoll);
     }
 
     IEnumerator EnemyTurn() {
@@ -401,14 +395,6 @@ public class BattleController : MonoBehaviour {
         loadedBtn.interactable = act;
         sleightBtn.interactable = act;
         bargainBtn.interactable = act;
-    }
-
-    void SetDie(int i, int v, bool lowest) {
-        var img = diceSlots[i];
-        img.gameObject.SetActive(v >= 0);
-        if (v < 0) return;
-        img.GetComponentInChildren<TMP_Text>().text = v.ToString();
-        img.color = lowest ? new Color(0.7f, 0.3f, 1f) : Color.white;
     }
 
     void Log(string m) => logText.text = m;

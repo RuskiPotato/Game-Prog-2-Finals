@@ -15,7 +15,7 @@ public class DiceLabController : MonoBehaviour {
     public GameObject moraleRoot;       // holds MoraleBar
     public Slider fateBar, suspicionBar, moraleBar;      // Min 0, Max 1
     public TMP_Text tierText, maliceText, oddsText, audacityText, goldText, logText;
-    public Image[] diceSlots;           // 5 squares, each with a TMP_Text child
+    public DiceTray diceTray;         
     public Button rollBtn, loadedBtn, sleightBtn, bargainBtn, fateUpBtn, fateDownBtn,
                   finishTutorialBtn, forceEndBtn;
     public Button endEncounterBtn;      // optional: applies the per-encounter Suspicion decay
@@ -132,14 +132,8 @@ public class DiceLabController : MonoBehaviour {
         }
 
         // placeholder tumble
-        for (float t = 0; t < 0.6f; t += 0.06f) {
-            for (int i = 0; i < diceSlots.Length; i++) SetDie(i, i < n ? Random.Range(1, 21) : -1, false);   // cosmetic only, not the seeded stream
-            yield return new WaitForSeconds(0.06f);
-        }
-        for (int i = 0; i < diceSlots.Length; i++) {
-            bool lowest = i < n && result.Dice[i] == result.Lowest;
-            SetDie(i, i < n ? result.Dice[i] : -1, lowest);
-        }
+        yield return diceTray.Tumble(n);
+        diceTray.ShowRoll(result);
 
         int total = result.Lowest + RollMod;
         bool success = total >= CurrentDc;
@@ -169,14 +163,6 @@ public class DiceLabController : MonoBehaviour {
         progress.Phase = GamePhase.Normal;
         foreach (var id in firstUnlocks) progress.Unlock(id);
         ApplyPhase();
-    }
-
-    void SetDie(int i, int v, bool lowest) {
-        var img = diceSlots[i];
-        img.gameObject.SetActive(v >= 0);
-        if (v < 0) return;
-        img.GetComponentInChildren<TMP_Text>().text = v.ToString();
-        img.color = lowest ? new Color(0.7f, 0.3f, 1f) : Color.white;
     }
 
     void Log(string m) => logText.text = m;

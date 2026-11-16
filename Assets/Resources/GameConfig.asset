@@ -12,10 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c65ca7749014be4e85c31ef38b18ece, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  classes: {fileID: 0}
-  run: {fileID: 0}
-  dummy: {fileID: 0}
-  scriptedBrute: {fileID: 0}
-  fights: []
-  elites: []
-  bosses: []
+  classes: {fileID: 11400000, guid: a262d7ecd13cb804a9fe906297b8421a, type: 2}
+  run: {fileID: 11400000, guid: 781f1b2364c3f414f8d28fcf1f5c62f7, type: 2}
+  dummy: {fileID: 11400000, guid: 65edf6642ad14a74a8e914781b793154, type: 2}
+  scriptedBrute: {fileID: 11400000, guid: efd45b7bf9c16f34ca337c3127a3be9b, type: 2}
+  fights:
+  - {fileID: 11400000, guid: 0751932315cdce74784cbe87b22d23dc, type: 2}
+  - {fileID: 11400000, guid: 3170b500668fcf0489d99ca4ac243555, type: 2}
+  elites:
+  - {fileID: 11400000, guid: 14ed76594098e2f4a87bb45f8e80c919, type: 2}
+  bosses:
+  - {fileID: 11400000, guid: efd45b7bf9c16f34ca337c3127a3be9b, type: 2}
