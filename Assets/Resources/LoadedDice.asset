@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef578355e7f119c4d9d79514b82c5372, type: 3}
+  m_Name: LoadedDice
+  m_EditorClassIdentifier: 
+  art: {fileID: 0}
+  id: loaded_dice
+  displayName: Loaded Dice
+  description: Remove 2 Malice dice before a roll, or cancel a miss and reroll once.
+  audacityCost: 1
+  needsSuspicionCheck: 1
+  diceRemoved: 2

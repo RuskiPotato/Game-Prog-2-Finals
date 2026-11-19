@@ -5,5 +5,5 @@ public class SkillData : ScriptableObject {
     public string id;
     public string displayName;
     [TextArea] public string description;
-    public int cooldown = 3;     // skills use cooldowns only
+    public int cooldown = 3;     // skills use cooldowns, never mana
 }

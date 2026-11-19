@@ -7,9 +7,7 @@ public enum AttackStat { Strength, Magick }
 [Serializable] public struct StatBlock { public int hp, str, mag, agi, cunning; }
 [Serializable] public struct CheatCostMod { public string cheatId; public int delta; }  // e.g. sleight_of_hand, -1
 
-// To add a class 
-//  Create 
-//  Paperboard God Class > fill it in > add it to the ClassRegistry.
+// To add a class: Create > Paperboard God > Class, fill it in, add it to the ClassRegistry.
 [CreateAssetMenu(menuName = "Paperboard God/Class", fileName = "NewClass")]
 public class ClassData : ScriptableObject {
     [Header("Identity")]
@@ -23,6 +21,7 @@ public class ClassData : ScriptableObject {
     public AttackStat attackStat = AttackStat.Strength;
     public int weaponDie = 6;                      // damage = d(weaponDie) + attack stat
     public List<SkillData> skills = new List<SkillData>();
+    [TextArea] public List<string> passives = new List<string>();   // shown in the side panel when the hero is selected
 
     [Header("Cheats")]
     public int startingAudacity = 3;

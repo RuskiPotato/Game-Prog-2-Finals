@@ -3,19 +3,20 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DiceLabController : MonoBehaviour {
+// Dice sandbox. Cheat rules come from CheatRunner and the CheatRegistry (same code as the Battle scene);
+// this script only owns the sandbox state and its debug buttons.
+public class DiceLabController : MonoBehaviour, ICheatHost {
     [Header("Targets")] public int dc = 12;
     public int tutorialDc = 6;
     [Header("Mode")] public bool soloMode = true;
     [Header("Scripted first encounter")] public int scriptedLossRolls = 4;
-    public string[] firstUnlocks = { "loaded_dice", "bargain_fate", "sleight_of_hand" };
 
     [Header("UI")]
     public GameObject fatePanel;        // holds FateBar, TierText, MaliceText
     public GameObject moraleRoot;       // holds MoraleBar
     public Slider fateBar, suspicionBar, moraleBar;      // Min 0, Max 1
     public TMP_Text tierText, maliceText, oddsText, audacityText, goldText, logText;
-    public DiceTray diceTray;         
+    public DiceTray diceTray;
     public Button rollBtn, loadedBtn, sleightBtn, bargainBtn, fateUpBtn, fateDownBtn,
                   finishTutorialBtn, forceEndBtn;
     public Button endEncounterBtn;      // optional: applies the per-encounter Suspicion decay
@@ -23,6 +24,7 @@ public class DiceLabController : MonoBehaviour {
     FateState s;
     ProgressState progress;
     HeroUnit hero;
+    CheatRegistry cheats;
     int removedDice, firstRolls;
     bool sleightArmed, rolling, cheatedThisEncounter, failedThisEncounter;
 
@@ -30,17 +32,34 @@ public class DiceLabController : MonoBehaviour {
     int RollMod => hero.AttackModifier + s.MoraleModifier;
     int CurrentDice => Mathf.Max(1, s.TotalDice - removedDice);
 
+    // ---- ICheatHost ----
+    public FateState Fate => s;
+    public HeroUnit Hero => hero;
+    public int RemovedMaliceDice => removedDice;
+    public bool SleightArmed => sleightArmed;
+    public void RemoveMaliceDice(int count) { removedDice = count; Refresh(); }
+    public void ArmSleightOfHand() { sleightArmed = true; Refresh(); }
+    public void Log(string m) => logText.text = m;
+
     void Start() {
+        var cfg = GameManager.Instance != null ? GameManager.Instance.Config : null;
+        if (cfg == null || cfg.classes == null || cfg.classes.Default == null || cfg.cheats == null) {
+            Debug.LogError("DiceLab: GameConfig is missing, or its Classes (with a Default Class) or Cheats slot is empty.");
+            enabled = false;
+            return;
+        }
+        cheats = cfg.cheats;
+        hero = new HeroUnit(cfg.classes.Default);
+
         progress = new ProgressState();
         s = new FateState { SoloMode = soloMode };
-        hero = new HeroUnit(GameManager.Instance.Config.classes.Default);
         s.Audacity = hero.Class.startingAudacity;
         s.Changed += Refresh;
 
         rollBtn.onClick.AddListener(() => StartCoroutine(DoRoll()));
-        loadedBtn.onClick.AddListener(UseLoadedDice);
-        sleightBtn.onClick.AddListener(UseSleight);
-        bargainBtn.onClick.AddListener(UseBargain);
+        loadedBtn.onClick.AddListener(() => PlayCheat("loaded_dice"));
+        sleightBtn.onClick.AddListener(() => PlayCheat("sleight_of_hand"));
+        bargainBtn.onClick.AddListener(() => PlayCheat("bargain_fate"));
         fateUpBtn.onClick.AddListener(() => s.AddFate(10));
         fateDownBtn.onClick.AddListener(() => s.AddFate(-10));
         finishTutorialBtn.onClick.AddListener(() => {
@@ -84,34 +103,17 @@ public class DiceLabController : MonoBehaviour {
         fateDownBtn.gameObject.SetActive(progress.Phase != GamePhase.Tutorial);
     }
 
-    bool TryPlayCheat(string cheatId, int baseCost, string label) {
-        int cost = hero.CheatCost(cheatId, baseCost) + s.CheatCostBump;
-        if (rolling || s.Audacity < cost) { Log($"Need {cost} Audacity."); return false; }
-        s.Audacity -= cost;
-        bool pass = s.SuspicionCheck(hero.Cunning);
-        s.AddMorale(-3);
-        cheatedThisEncounter = true;
-        if (!pass) failedThisEncounter = true;
-        Log(pass ? $"{label}: unnoticed." : $"{label}: the GM saw that!");
-        return true;
-    }
-
-    void UseLoadedDice() {
-        if (removedDice == 0 && TryPlayCheat("loaded_dice", 1, "Loaded Dice")) { removedDice = 2; Refresh(); }
-    }
-
-    void UseSleight() {
-        if (!sleightArmed && TryPlayCheat("sleight_of_hand", 2, "Sleight of Hand")) { sleightArmed = true; Refresh(); }
-    }
-
-    void UseBargain() {
+    // All cheat rules live in CheatRunner and the CheatData assets
+    void PlayCheat(string id) {
         if (rolling) return;
-        int cost = s.BargainCost;                // 2 gold per point of Fate; no Suspicion check
-        if (s.Gold < cost) { Log($"Need {cost} gold."); return; }
-        s.Gold -= cost;
-        s.Fate = 0;
-        s.Notify();
-        Log($"Bargained with Fate for {cost} gold.");
+        var cheat = cheats.Get(id);
+        if (cheat == null) { Log($"Cheat '{id}' is not in the CheatRegistry."); return; }
+
+        var result = CheatRunner.TryPlay(cheat, this);
+        if (!result.Played) return;
+        if (result.SuspicionChecked) cheatedThisEncounter = true;
+        if (result.Noticed) failedThisEncounter = true;
+        Refresh();
     }
 
     RollResult OneRoll(int n, int needed, bool scripted) =>
@@ -131,7 +133,6 @@ public class DiceLabController : MonoBehaviour {
             if (second.Lowest > result.Lowest) result = second;
         }
 
-        // placeholder tumble
         yield return diceTray.Tumble(n);
         diceTray.ShowRoll(result);
 
@@ -161,9 +162,7 @@ public class DiceLabController : MonoBehaviour {
         if (progress.Phase != GamePhase.FirstEncounter) return;
         Log("Party wipe. Destiny: \"Is that really the best you can do?\"");
         progress.Phase = GamePhase.Normal;
-        foreach (var id in firstUnlocks) progress.Unlock(id);
+        foreach (var id in GameManager.FirstUnlocks) progress.Unlock(id);
         ApplyPhase();
     }
-
-    void Log(string m) => logText.text = m;
 }

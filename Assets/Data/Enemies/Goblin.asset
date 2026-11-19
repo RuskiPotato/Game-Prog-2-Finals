@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Goblin
   m_EditorClassIdentifier: 
   id: Goblin
-  displayName: TrainingDummy
+  displayName: Goblin
   hp: 14
   defenseDc: 11
   agi: 4
@@ -22,3 +22,4 @@ MonoBehaviour:
   damageBonus: 1
   goldReward: 15
   attacks: 1
+  passives: []

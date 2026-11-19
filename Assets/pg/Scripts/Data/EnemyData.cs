@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 // Placeholder numbers throughout: tune with the simulation later.
@@ -13,4 +14,7 @@ public class EnemyData : ScriptableObject {
     public int damageBonus = 1;
     public int goldReward = 15;
     public bool attacks = true;      // false for the Training Dummy
+
+    [Header("Display")]
+    [TextArea] public List<string> passives = new List<string>();   // shown in the side panel when the enemy is selected
 }
