@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Blue_Pentagon_0: 8827900106706390501
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

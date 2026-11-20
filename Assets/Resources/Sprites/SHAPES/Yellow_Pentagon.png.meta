@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Yellow_Pentagon_0: -3904390123763151448
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

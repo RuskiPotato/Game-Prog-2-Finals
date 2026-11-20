@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Mana_Potion_02_0: 4672747973666031960
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

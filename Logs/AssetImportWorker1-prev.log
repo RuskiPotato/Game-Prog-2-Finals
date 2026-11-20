@@ -15,7 +15,7 @@ C:/Users/jason/Documents/GitHub/GameProd/Game Prog Finals
 -logFile
 Logs/AssetImportWorker1.log
 -srvPort
-50149
+53231
 -job-worker-count
 7
 -background-job-worker-count
@@ -59,12 +59,12 @@ C:/Users/jason/Documents/GitHub/GameProd/Game Prog Finals
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gfx=262144"
-Player connection [12972]  Target information:
+Player connection [9180]  Target information:
 
-Player connection [12972]  * "[IP] 192.168.180.115 [Port] 0 [Flags] 2 [Guid] 3067923483 [EditorId] 3067923483 [Version] 1048832 [Id] WindowsEditor(7,RuskiPotato) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+Player connection [9180]  * "[IP] 10.20.47.12 [Port] 0 [Flags] 2 [Guid] 3505353072 [EditorId] 3505353072 [Version] 1048832 [Id] WindowsEditor(7,RuskiPotato) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
 
-Player connection [12972] Host joined multi-casting on [225.0.0.222:54997]...
-Player connection [12972] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [9180] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [9180] Host joined alternative multi-casting on [225.0.0.222:34997]...
 JobSystem: Creating JobQueue using job-worker-count value 7
 [Physics::Module] Initialized fallback backend.
 [Physics::Module] Id: 0xdecafbad
@@ -75,7 +75,7 @@ Library Redirect Path: Library/
 [Physics::Module] SDK Version: 4.1.2
 [Physics::Module] Integration Version: 1.0.0
 [Physics::Module] Threading Mode: Multi-Threaded
-Refreshing native plugins compatible for Editor in 1742.15 ms, found 5 plugins.
+Refreshing native plugins compatible for Editor in 9.74 ms, found 5 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 6000.0.33f1 (433b0a79340b)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.0.33f1/Editor/Data/Resources/UnitySubsystems
@@ -91,43 +91,43 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.0.33f1/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.0.33f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.0.33f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56412
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56876
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.0.33f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.575457 seconds.
-- Loaded All Assemblies, in 42.747 seconds
+Registered in 0.002417 seconds.
+- Loaded All Assemblies, in  0.565 seconds
 Native extension for WindowsStandalone target not found
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  1.290 seconds
-Domain Reload Profiling: 44036ms
-	BeginReloadAssembly (37523ms)
+- Finished resetting the current domain, in  0.272 seconds
+Domain Reload Profiling: 836ms
+	BeginReloadAssembly (353ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (0ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
 		CreateAndSetChildDomain (1ms)
-	RebuildCommonClasses (1464ms)
-	RebuildNativeTypeToScriptingClass (10ms)
-	initialDomainReloadingComplete (627ms)
-	LoadAllAssembliesAndSetupDomain (3120ms)
-		LoadAssemblies (37518ms)
+	RebuildCommonClasses (30ms)
+	RebuildNativeTypeToScriptingClass (11ms)
+	initialDomainReloadingComplete (40ms)
+	LoadAllAssembliesAndSetupDomain (130ms)
+		LoadAssemblies (349ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (3117ms)
-			TypeCache.Refresh (3109ms)
-				TypeCache.ScanAssembly (2199ms)
-			BuildScriptInfoCaches (1ms)
-			ResolveRequiredComponents (3ms)
-	FinalizeReload (1291ms)
+		AnalyzeDomain (127ms)
+			TypeCache.Refresh (126ms)
+				TypeCache.ScanAssembly (116ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (0ms)
+	FinalizeReload (273ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (1176ms)
+		SetupLoadedEditorAssemblies (235ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (75ms)
-			SetLoadedEditorAssemblies (13ms)
-			BeforeProcessingInitializeOnLoad (214ms)
-			ProcessInitializeOnLoadAttributes (622ms)
-			ProcessInitializeOnLoadMethodAttributes (251ms)
+			InitializePlatformSupportModulesInManaged (20ms)
+			SetLoadedEditorAssemblies (3ms)
+			BeforeProcessingInitializeOnLoad (44ms)
+			ProcessInitializeOnLoadAttributes (123ms)
+			ProcessInitializeOnLoadMethodAttributes (44ms)
 			AfterProcessingInitializeOnLoad (0ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
@@ -136,89 +136,341 @@ Domain Reload Profiling: 44036ms
 Worker process is ready to serve import requests
 Import Worker Mode flag is 0x00
 Begin MonoManager ReloadAssembly
-- Loaded All Assemblies, in 49.513 seconds
-Refreshing native plugins compatible for Editor in 8.74 ms, found 5 plugins.
+- Loaded All Assemblies, in  0.825 seconds
+Refreshing native plugins compatible for Editor in 1.65 ms, found 5 plugins.
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 7.47 ms, found 5 plugins.
+Refreshing native plugins compatible for Editor in 2.24 ms, found 5 plugins.
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  5.586 seconds
-Domain Reload Profiling: 55090ms
+- Finished resetting the current domain, in  0.726 seconds
+Domain Reload Profiling: 1547ms
 	BeginReloadAssembly (135ms)
 		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (6ms)
+		DisableScriptedObjects (4ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (22ms)
-	RebuildCommonClasses (29ms)
-	RebuildNativeTypeToScriptingClass (8ms)
-	initialDomainReloadingComplete (39ms)
-	LoadAllAssembliesAndSetupDomain (49292ms)
-		LoadAssemblies (45498ms)
+		CreateAndSetChildDomain (24ms)
+	RebuildCommonClasses (28ms)
+	RebuildNativeTypeToScriptingClass (9ms)
+	initialDomainReloadingComplete (34ms)
+	LoadAllAssembliesAndSetupDomain (614ms)
+		LoadAssemblies (438ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (3872ms)
-			TypeCache.Refresh (3560ms)
-				TypeCache.ScanAssembly (3509ms)
-			BuildScriptInfoCaches (257ms)
-			ResolveRequiredComponents (43ms)
-	FinalizeReload (5587ms)
+		AnalyzeDomain (256ms)
+			TypeCache.Refresh (178ms)
+				TypeCache.ScanAssembly (164ms)
+			BuildScriptInfoCaches (66ms)
+			ResolveRequiredComponents (9ms)
+	FinalizeReload (726ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (3652ms)
+		SetupLoadedEditorAssemblies (590ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (15ms)
-			SetLoadedEditorAssemblies (27ms)
-			BeforeProcessingInitializeOnLoad (330ms)
-			ProcessInitializeOnLoadAttributes (1536ms)
-			ProcessInitializeOnLoadMethodAttributes (1720ms)
-			AfterProcessingInitializeOnLoad (23ms)
-			EditorAssembliesLoaded (1ms)
+			InitializePlatformSupportModulesInManaged (2ms)
+			SetLoadedEditorAssemblies (5ms)
+			BeforeProcessingInitializeOnLoad (97ms)
+			ProcessInitializeOnLoadAttributes (367ms)
+			ProcessInitializeOnLoadMethodAttributes (115ms)
+			AfterProcessingInitializeOnLoad (4ms)
+			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (19ms)
-Launched and connected shader compiler UnityShaderCompiler.exe after 0.09 seconds
-Refreshing native plugins compatible for Editor in 11.23 ms, found 5 plugins.
+		AwakeInstancesAfterBackupRestoration (5ms)
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.01 seconds
+Refreshing native plugins compatible for Editor in 1.82 ms, found 5 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 220 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 7169 unused Assets / (3.3 MB). Loaded Objects now: 7875.
-Memory consumption went from 184.3 MB to 180.9 MB.
-Total: 23.853600 ms (FindLiveObjects: 1.480900 ms CreateObjectMapping: 1.075100 ms MarkObjects: 17.250900 ms  DeleteObjects: 4.044300 ms)
+Unloading 7203 unused Assets / (4.3 MB). Loaded Objects now: 7909.
+Memory consumption went from 186.6 MB to 182.3 MB.
+Total: 6.816400 ms (FindLiveObjects: 1.246600 ms CreateObjectMapping: 0.343500 ms MarkObjects: 3.591400 ms  DeleteObjects: 1.634000 ms)
 
 ========================================================================
 Received Import Request.
-  Time since last request: 6990.487463 seconds.
-  path: Assets/Resources/Background/NightForest/Image without mist.png
-  artifactKey: Guid(3663334164e62574dbb56c7241a67fea) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Background/NightForest/Image without mist.png using Guid(3663334164e62574dbb56c7241a67fea) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '755aa1d524115ca5a3fdaafa5f392999') in 0.1114716 seconds
+  Time since last request: 82679.735066 seconds.
+  path: Assets/Data/Card.prefab
+  artifactKey: Guid(f9d64bf945dc55b4da638422faa713ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Data/Card.prefab using Guid(f9d64bf945dc55b4da638422faa713ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '9b20a14c52a2ec1d6ac6d1718d50df69') in 0.0484007 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 29
+
+========================================================================
+Received Import Request.
+  Time since last request: 34.494006 seconds.
+  path: Assets/Resources/GameConfig.asset
+  artifactKey: Guid(b6adf4822cc51b44fa1756fa977d303b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/GameConfig.asset using Guid(b6adf4822cc51b44fa1756fa977d303b) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '5e83d5ef2c314f873e2c9eed2546f079') in 0.0072119 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 16
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/SleightOfHand.asset
+  artifactKey: Guid(ddcfac39fdd766b47aa379363e27aadc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/SleightOfHand.asset using Guid(ddcfac39fdd766b47aa379363e27aadc) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'cf18b213b8d60295feb254e0662bbe94') in 0.0010176 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
+
+========================================================================
+Received Import Request.
+  Time since last request: 7.682461 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/1 Headers/1/1.png
+  artifactKey: Guid(b77f06782af240443b9a2896a696ef4e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/1 Headers/1/1.png using Guid(b77f06782af240443b9a2896a696ef4e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '6941e4209567a6fb3eb4c73c1eb4ac1d') in 0.0790262 seconds
 Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
 
 ========================================================================
 Received Import Request.
-  Time since last request: 0.000025 seconds.
-  path: Assets/Resources/Background/NightForest/Night-Forest.psd
-  artifactKey: Guid(cc1bf7f34dd1ed84e9b2d36eeb7cacae) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Background/NightForest/Night-Forest.psd using Guid(cc1bf7f34dd1ed84e9b2d36eeb7cacae) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '9dc82c4cb6769321cebcc8870fa9be2c') in 0.0233603 seconds
+  Time since last request: 0.000018 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/1 Headers/4/1.png
+  artifactKey: Guid(4f4d59fd010acef4f92ffd9dfb9e67bc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/1 Headers/4/1.png using Guid(4f4d59fd010acef4f92ffd9dfb9e67bc) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '351353ee19f754b2fc2ec49ac55cfc53') in 0.0253187 seconds
 Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
 
 ========================================================================
 Received Import Request.
-  Time since last request: 2.767085 seconds.
-  path: Assets/Resources/Background/NightForest/Layers/2.png
-  artifactKey: Guid(0d38d75218c365344ab6b69cdd5c47b6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Background/NightForest/Layers/2.png using Guid(0d38d75218c365344ab6b69cdd5c47b6) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'ca504ea10903c7b6c6e87df55807f147') in 0.0235431 seconds
+  Time since last request: 0.000023 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Day & Night Cycle/Full/3 Noon/1.png
+  artifactKey: Guid(f7167577478d2cb4a9bbfa8b44fc5fc4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Day & Night Cycle/Full/3 Noon/1.png using Guid(f7167577478d2cb4a9bbfa8b44fc5fc4) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '5b55e2921ed9b8facfa58fb339580a8d') in 0.0185412 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000011 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Day & Night Cycle/Half/6 Lightning 2/1.png
+  artifactKey: Guid(29f9e862023fdbc41b7f0cc8fb448168) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Day & Night Cycle/Half/6 Lightning 2/1.png using Guid(29f9e862023fdbc41b7f0cc8fb448168) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'a6d8aeafe0bd706efd3bea35fa12f924') in 0.0205775 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000014 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Day & Night Cycle/Half/7 Raining/1.png
+  artifactKey: Guid(c788d072a6888f242a41ec5a4cc8dcd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Day & Night Cycle/Half/7 Raining/1.png using Guid(c788d072a6888f242a41ec5a4cc8dcd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '69207c695c7351a292bb654d69110a67') in 0.0254935 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000014 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/4 Buttons/Sliced/1.png
+  artifactKey: Guid(7148f7074c9ab7e49bc0f287beb6b567) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/4 Buttons/Sliced/1.png using Guid(7148f7074c9ab7e49bc0f287beb6b567) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'a01e2109d4d8c3c465be65ef1479804c') in 0.0221507 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000014 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Folding & Cutout/9 Calender/1.png
+  artifactKey: Guid(27d86d838ee8e7b4099ff15f5378b7ec) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Folding & Cutout/9 Calender/1.png using Guid(27d86d838ee8e7b4099ff15f5378b7ec) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'be292446d5a7f0f2839ec32c56f9229f') in 0.0193019 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000014 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Folding & Cutout/2 item Holder/1.png
+  artifactKey: Guid(71bb0ca6580658346b9cc50ca5aa0da3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Folding & Cutout/2 item Holder/1.png using Guid(71bb0ca6580658346b9cc50ca5aa0da3) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'bc025586acc4d6d4757cb019727ab610') in 0.0181455 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/3 Rewards/1/1.png
+  artifactKey: Guid(a7831ca97aa40844aaa46aad2205efa4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/3 Rewards/1/1.png using Guid(a7831ca97aa40844aaa46aad2205efa4) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '01a5598cc5b9b3e9c1e4d3a45c7e6cfe') in 0.0221476 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000022 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/2 Icons/1.png
+  artifactKey: Guid(c35b2e5364ccf344da755bc0b68aff33) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/2 Icons/1.png using Guid(c35b2e5364ccf344da755bc0b68aff33) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'd2f6877f7ac65a04ff193309e7300b68') in 0.0191157 seconds
 Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
 
 ========================================================================
 Received Import Request.
   Time since last request: 0.000015 seconds.
-  path: Assets/Resources/Background/NightForest/Layers/4.png
-  artifactKey: Guid(b99c77a8ada932d4c9148038c81bcb2c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Background/NightForest/Layers/4.png using Guid(b99c77a8ada932d4c9148038c81bcb2c) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'a7ce1f90a49d2f33f5635988b89b4824') in 0.0252399 seconds
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/7 Day & Night Cycle/1.png
+  artifactKey: Guid(03034276ae40a6142bc04f7729bca2c7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/7 Day & Night Cycle/1.png using Guid(03034276ae40a6142bc04f7729bca2c7) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '34aa258556d07ef120654891304c831e') in 0.0239865 seconds
 Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
 
 ========================================================================
 Received Import Request.
   Time since last request: 0.000016 seconds.
-  path: Assets/Resources/Background/NightForest/Layers/6.png
-  artifactKey: Guid(30dd42e5ebaebdf43b1969f1d31e1061) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Background/NightForest/Layers/6.png using Guid(30dd42e5ebaebdf43b1969f1d31e1061) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '85f83f4de5b99f2c77968492050f2717') in 0.0201003 seconds
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/2 Headers/1.png
+  artifactKey: Guid(9f48b85d57aa9524a92db8ede554c724) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/2 Headers/1.png using Guid(9f48b85d57aa9524a92db8ede554c724) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '1420e53c81da5d4953a86f18e4bb48cd') in 0.0333887 seconds
 Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
 
+========================================================================
+Received Import Request.
+  Time since last request: 0.000013 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Folding & Cutout/4 Notification/1/1.png
+  artifactKey: Guid(298861090aed8114f86e55c9508972fb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Folding & Cutout/4 Notification/1/1.png using Guid(298861090aed8114f86e55c9508972fb) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '816a7a41a9b2f54690d4e3915eac112f') in 0.0171729 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000044 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/9 Stamp/Stamp/Stamped/1.png
+  artifactKey: Guid(5551d90fd9d957540beee2861abdbc4a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/9 Stamp/Stamp/Stamped/1.png using Guid(5551d90fd9d957540beee2861abdbc4a) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '7d0fa1f6315b214e76a0b5448178668e') in 0.0169813 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/5 Mini Map/1.png
+  artifactKey: Guid(ca6d084c10e851f479acfa68bfe81a3f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/5 Mini Map/1.png using Guid(ca6d084c10e851f479acfa68bfe81a3f) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'b75210a8ff12552fbff94f796eec2f05') in 0.019985 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000027 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/1 Headers/2/1.png
+  artifactKey: Guid(abe65b021b45e18498cf82120bd8161e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/1 Headers/2/1.png using Guid(abe65b021b45e18498cf82120bd8161e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '396a309f057f4b9242672f80aba42d18') in 0.018457 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/3 Rewards/2/1.png
+  artifactKey: Guid(065c40ae8593de34bb196433285a2591) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/3 Rewards/2/1.png using Guid(065c40ae8593de34bb196433285a2591) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '1a6ef98e340d5f210186db1202009790') in 0.0161937 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000014 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/10 Calander/1.png
+  artifactKey: Guid(096eb84d96b55ab4aae76dbcc9ec8271) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/10 Calander/1.png using Guid(096eb84d96b55ab4aae76dbcc9ec8271) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '389142cb69e57692df67c80356acb9b3') in 0.0172689 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/5 Holders/1.png
+  artifactKey: Guid(23aec1cbd727e06468b45a4763eb0ac5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/5 Holders/1.png using Guid(23aec1cbd727e06468b45a4763eb0ac5) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '15f980ce942bdc53cb1f6e3306fa5434') in 0.0161999 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000014 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/7 Dialogue Box/1.png
+  artifactKey: Guid(d03db66817250fe47a4f3ed6eaf20366) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/7 Dialogue Box/1.png using Guid(d03db66817250fe47a4f3ed6eaf20366) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '38bad1f4c4fb14784f4a0d207dd8927d') in 0.0150709 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000014 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/8 Shop/1.png
+  artifactKey: Guid(a2b4cdb9e2141cd4096ae7c9e40f47cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/8 Shop/1.png using Guid(a2b4cdb9e2141cd4096ae7c9e40f47cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'db323679670a13ed1cb6a4da37939207') in 0.0211644 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Book Desk/1.png
+  artifactKey: Guid(82e2c9ebfbf362747b3696f5c15759f1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Book Desk/1.png using Guid(82e2c9ebfbf362747b3696f5c15759f1) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'd6512a4e2fc7fd37293d9c96bbeb3594') in 0.0226754 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/6 Player HUD/1.png
+  artifactKey: Guid(d0dc7e4b3f7438f478e45887f20e0c88) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content Appear Animation/Plain/6 Player HUD/1.png using Guid(d0dc7e4b3f7438f478e45887f20e0c88) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'a7a2def86ee6416abb7bf67c0f48fb39') in 0.0231253 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000014 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/4 Buttons/1.png
+  artifactKey: Guid(d9fb96372731cc74587a0885e1435976) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/4 Buttons/1.png using Guid(d9fb96372731cc74587a0885e1435976) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '255d0ba4e728dc6ee983bdf47ab042dd') in 0.0176668 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000013 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/9 Rewards/1.png
+  artifactKey: Guid(496dbd0b47cb80c408abeca15a3a78b1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/9 Rewards/1.png using Guid(496dbd0b47cb80c408abeca15a3a78b1) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '8cfe419df162cb608cbdc7701a2b7cc3') in 0.0208613 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000011 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/3 Progress Bars/1.png
+  artifactKey: Guid(1bbd11380e38ff7478613f350b390303) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Content/3 Progress Bars/1.png using Guid(1bbd11380e38ff7478613f350b390303) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '9520b448276d3b1255626711d114b621') in 0.0231172 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000018 seconds.
+  path: Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/3 Item Holder/1.png
+  artifactKey: Guid(ca3715e13efa4a749b96da4281189d22) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Folding & Cutout/3 Item Holder/1.png using Guid(ca3715e13efa4a749b96da4281189d22) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'b7e73ee4dd62fe36b16afd798976e817') in 0.0191254 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Prepare
+Begin MonoManager ReloadAssembly
+- Loaded All Assemblies, in  0.665 seconds
+Refreshing native plugins compatible for Editor in 1.63 ms, found 5 plugins.
+Native extension for WindowsStandalone target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.690 seconds
+Domain Reload Profiling: 1354ms
+	BeginReloadAssembly (188ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (11ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (52ms)
+	RebuildCommonClasses (27ms)
+	RebuildNativeTypeToScriptingClass (9ms)
+	initialDomainReloadingComplete (23ms)
+	LoadAllAssembliesAndSetupDomain (416ms)
+		LoadAssemblies (319ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (178ms)
+			TypeCache.Refresh (7ms)
+				TypeCache.ScanAssembly (0ms)
+			BuildScriptInfoCaches (159ms)
+			ResolveRequiredComponents (9ms)
+	FinalizeReload (691ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (528ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (2ms)
+			SetLoadedEditorAssemblies (4ms)
+			BeforeProcessingInitializeOnLoad (106ms)
+			ProcessInitializeOnLoadAttributes (350ms)
+			ProcessInitializeOnLoadMethodAttributes (61ms)
+			AfterProcessingInitializeOnLoad (4ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (13ms)
+Refreshing native plugins compatible for Editor in 2.25 ms, found 5 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 13 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 7203 unused Assets / (4.7 MB). Loaded Objects now: 7981.
+Memory consumption went from 158.4 MB to 153.8 MB.
+Total: 7.352400 ms (FindLiveObjects: 0.504400 ms CreateObjectMapping: 0.395100 ms MarkObjects: 4.127300 ms  DeleteObjects: 2.324200 ms)
+
+Prepare: number of updated asset objects reloaded= 0
+Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
+AssetImportWorker is now disconnected from the server
+Process exiting
+Exiting without the bug reporter. Application will terminate with return code 0

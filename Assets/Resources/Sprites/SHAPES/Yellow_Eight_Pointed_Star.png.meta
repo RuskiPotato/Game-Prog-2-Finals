@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Yellow_Eight_Pointed_Star_0: 8863785718772490402
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
