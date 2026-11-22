@@ -164,7 +164,7 @@ RectTransform:
   m_GameObject: {fileID: 2597222701122863628}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1706513, y: 0.16630502, z: 0.3266705}
+  m_LocalScale: {x: 0.3432139, y: 0.33447266, z: 0.6569997}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7681146875564078954}
@@ -203,8 +203,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: -3143288764896362894, guid: e956f9a34c0d5f04fbfb3c239d998487, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -229,3 +229,7 @@ MonoBehaviour:
   label: {fileID: 4432105726271308305}
   normal: {r: 0.9056604, g: 0.004271993, b: 0.004271993, a: 1}
   lowest: {r: 0.7, g: 0.3, b: 1, a: 1}
+  normalSprite: {fileID: 7028616704906629411, guid: 3b06ac5ddaf7b484b848bd9ff30ece13, type: 3}
+  maliceSprite: {fileID: 7028616704906629411, guid: a62cc02cac2572941a99fd9f218aa5b7, type: 3}
+  maliceNormal: {r: 1, g: 1, b: 1, a: 1}
+  maliceLowest: {r: 0.7, g: 0.3, b: 1, a: 1}

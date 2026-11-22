@@ -22,4 +22,5 @@ MonoBehaviour:
   damageBonus: 1
   goldReward: 15
   attacks: 1
+  attackName: Club Pummel
   passives: []

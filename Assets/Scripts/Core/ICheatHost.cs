@@ -1,4 +1,4 @@
-// What a cheat is allowed to touch. The battle (and tests) implement this, so cheats never depend on a scene.
+// What a cheat is allowed to touch.
 public interface ICheatHost {
     FateState Fate { get; }
     HeroUnit Hero { get; }

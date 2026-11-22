@@ -10,8 +10,7 @@ public static class Balance {
     // Placeholder: the DC an enemy must meet to hit a hero.
     public static int HeroDefenseDc(int agi) => 7 + agi;
 
-    // Scripted first encounter: the hero always falls on the final round, never before,
-    // even if the player defends every turn.
+
     public static int ScriptedLossDamage(int maxHp, int currentHp, int rounds, int round, bool defending) {
         if (round >= rounds) return currentHp;                       // final round: guaranteed knockout
         int dmg = Mathf.CeilToInt(maxHp / (float)rounds);

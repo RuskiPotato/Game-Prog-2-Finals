@@ -9,7 +9,7 @@ public class AttackCardData : CardData {
     public override bool CanPlay(BattleContext ctx) => ctx.CanAct;
 
     public override string CostText(BattleContext ctx) {
-        if (ctx.Scripted) return "";                                  // odds stay hidden until the reveal
+        if (ctx.Scripted) return "";                                 
         float p = Odds.HitChance(ctx.Enemy.DefenseDc, ctx.RollMod, ctx.CurrentDice) * 100f;
         return $"{p:0.0}% to hit";
     }

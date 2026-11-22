@@ -22,7 +22,7 @@ MonoBehaviour:
   damageBonus: 2
   goldReward: 0
   attacks: 1
-  attackName: Attack
+  attackName: Smite
   passives:
   - 'Your doom
 

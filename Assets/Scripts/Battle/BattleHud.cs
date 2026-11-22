@@ -15,7 +15,7 @@ using UnityEngine.UI;
 //   gap between Fate and Suspicion bar  : enemy profile (name, HP)
 //   under the field: turn-order text row
 public class BattleHud : MonoBehaviour, IBattleView {
-    [Header(" Fate (hidden until the reveal)")]
+    [Header("Top centre: Fate (hidden until the reveal)")]
     public GameObject fatePanel;               // holds the diamond + texts
     public DiamondMeter fateMeter;             // fills 0-100
     public TMP_Text fateValueText;             // 70
@@ -23,17 +23,20 @@ public class BattleHud : MonoBehaviour, IBattleView {
     public TMP_Text maliceText;                // "Malice dice: 3 (rolling 4)"
     public TMP_Text goldText;                  // beside the Fate frame; keep it OUTSIDE fatePanel so it is always visible
 
-    [Header("Suspicion")]
+    [Header("Right edge: Suspicion (vertical bar, hidden until the reveal)")]
     public GameObject suspicionPanel;
     public Slider suspicionBar;                // Min 0, Max 1, Direction Bottom To Top
     public TMP_Text suspicionTierText;         // Watching
     public TMP_Text suspicionDetailText;       // 30/100  -  check DC 11
 
-    [Header("Morale")]
+    [Header("Left edge: Morale (vertical bar, party play only)")]
     public GameObject moralePanel;             // hidden until the reveal, and always hidden in solo (FateState.SoloMode)
     public Slider moraleBar;                   // Min 0, Max 1, Direction Bottom To Top
     public TMP_Text moraleTierText;            // Steady
     public TMP_Text moraleDetailText;          // 55/100  -  rolls +0
+
+    [Header("Under-unit HP (always visible, below each unit's image)")]
+    public UnitHpTag heroHpTag, enemyHpTag;
 
     [Header("Profiles (the gaps beside the Fate frame)")]
     public GameObject heroProfilePanel;        // between Morale bar and Fate
@@ -41,9 +44,8 @@ public class BattleHud : MonoBehaviour, IBattleView {
     public Slider heroHpBar;                   // optional, Min 0, Max 1
     public AudacityPips audacityPips;          // optional
     public TMP_Text audacityText;              // optional, "Audacity: 3"
-    public bool heroProfileAlwaysVisible = false;   // false: only while the hero is selected
+    public bool heroProfileAlwaysVisible = false;   
 
-    public GameObject enemyProfilePanel;       // between Fate and Suspicion bar; only while the enemy is selected
     public TMP_Text enemyText;                 // "Goblin Hustler  HP 9/14" (no HP in the scripted fight)
     public Slider enemyHpBar;                  // optional, hidden in the scripted fight
 
@@ -62,7 +64,7 @@ public class BattleHud : MonoBehaviour, IBattleView {
     public string turnOrderSeparator = "  vs  ";
     public bool showEnemyLandChance = false;    // Real mode: show "X% to land if you miss" on the enemy card
 
-    [Header("Clash cards")]
+    [Header("Clash cards (the two cards facing off)")]
     public GameObject heroActionPanel;         // shows what the hero committed to; hidden until they choose
     public TMP_Text heroActionText;            // "Attack  -  27.5% to hit"
     public GameObject enemyActionPanel;        // the enemy's telegraphed attack
@@ -105,7 +107,6 @@ public class BattleHud : MonoBehaviour, IBattleView {
         if (heroPassives != null) heroPassives.Hide();
         if (enemyPassives != null) enemyPassives.Hide();
         SetActive(heroProfilePanel, heroProfileAlwaysVisible);
-        SetActive(enemyProfilePanel, false);
     }
 
     void Update() {
@@ -176,6 +177,8 @@ public class BattleHud : MonoBehaviour, IBattleView {
             if (diceTray != null) diceTray.Clear();
             if (enemyDiceTray != null) enemyDiceTray.Clear();
         }
+        if (heroHpTag != null) heroHpTag.Set(ctx.Hero.DisplayName, ctx.Hero.Hp, ctx.Hero.MaxHp, true);
+        if (enemyHpTag != null) enemyHpTag.Set(ctx.Enemy.DisplayName, ctx.Enemy.Hp, ctx.Enemy.MaxHp, !ctx.Scripted);   // no enemy HP in the scripted fight
         RefreshClashCards(ctx);
         RefreshSelection(ctx);
         RefreshTurnOrder(ctx);
@@ -211,10 +214,9 @@ public class BattleHud : MonoBehaviour, IBattleView {
         }
     }
 
-    // ---- selection: profiles + passives ----
+   //profile passive selection
     void RefreshSelection(BattleContext ctx) {
         SetActive(heroProfilePanel, heroProfileAlwaysVisible || selected == Selected.Hero);
-        SetActive(enemyProfilePanel, selected == Selected.Enemy);
         if (heroSelectable != null) heroSelectable.SetSelected(selected == Selected.Hero);
         if (enemySelectable != null) enemySelectable.SetSelected(selected == Selected.Enemy);
 
@@ -230,7 +232,7 @@ public class BattleHud : MonoBehaviour, IBattleView {
         else if (enemyPassives != null) enemyPassives.Hide();
     }
 
-    // ---- turn order: "Round 2   Rogue > Goblin Hustler", active unit highlighted ----
+    // Turn Order
     void RefreshTurnOrder(BattleContext ctx) {
         if (turnOrderText == null) return;
         if (turnOrder.Count == 0) { turnOrderText.text = ""; return; }

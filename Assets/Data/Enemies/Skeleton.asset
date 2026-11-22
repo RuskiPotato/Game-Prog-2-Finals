@@ -22,3 +22,5 @@ MonoBehaviour:
   damageBonus: 0
   goldReward: 25
   attacks: 1
+  attackName: Slice
+  passives: []
