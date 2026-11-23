@@ -29,7 +29,6 @@ MonoBehaviour:
   skills:
   - {fileID: 11400000, guid: 4971b5e6358621f41a1f2d21b179d1d8, type: 2}
   - {fileID: 0}
-  passives:
-  - 
+  passives: []
   startingAudacity: 3
   cheatCostMods: []

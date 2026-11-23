@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f7e1a0c6b934d8dbb3a8c7f4a1d9e21, type: 3}
+  m_Name: Skull Clubbing
+  m_EditorClassIdentifier: 
+  moveName: Skull Clubbing
+  description: 
+  selectionWeight: 1
+  damageDie: 6
+  damageBonus: 1
+  attackModifier: 0

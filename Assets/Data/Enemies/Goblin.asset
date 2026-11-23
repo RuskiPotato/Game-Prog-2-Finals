@@ -23,4 +23,7 @@ MonoBehaviour:
   goldReward: 15
   attacks: 1
   attackName: Club Pummel
+  moves:
+  - {fileID: 11400000, guid: b9e9637766b81684f89f8e24f9fe0eee, type: 2}
+  - {fileID: 11400000, guid: ceba3f09f4bc45747b034de908ee6b37, type: 2}
   passives: []
