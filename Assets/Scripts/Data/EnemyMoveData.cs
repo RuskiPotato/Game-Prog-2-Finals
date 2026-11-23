@@ -43,7 +43,8 @@ public enum EnemyStatusEffectType
     AttackUp,
     DefenseUp,
     DamageReduction,
-    Regeneration
+    Regeneration,
+    DamageReductionPercent   // amount = % (used by Defend moves); appended last so existing assets keep their values
 }
 
 [System.Serializable]

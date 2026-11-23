@@ -10,7 +10,12 @@ public class GameConfig : ScriptableObject {
     public CheatRegistry cheats;
 
     [Header("Hand (left to right)")]
+    [Tooltip("The unique, permanent Attack and Defend core actions. Cheats live in CheatRegistry.")]
     public List<CardData> hand = new List<CardData>();
+
+    [Header("Combat deck (collectible cards only)")]
+    public List<CombatCardData> combatDeck = new List<CombatCardData>();
+    [Min(1)] public int combatHandSize = 3;
 
     [Header("Prologue enemies")]
     public EnemyData dummy;            // tutorial target

@@ -13,12 +13,18 @@ public class HeroUnit : Unit {
     }
 
     public override string DisplayName => Class.displayName;
-    public override int Agi => agi;
-    public override int DefenseDc => Balance.HeroDefenseDc(Agi);
-    public override int RollDamage() => DiceService.Die(Class.weaponDie) + AttackStatValue;
+    public override int BaseAgi => agi;
+    public override int BaseDefenseDc => Balance.HeroDefenseDc(Agi);   // Agi already includes Agility statuses
+    public override int RollDamage() => Mathf.Max(0, DiceService.Die(Class.weaponDie) + AttackStatValue + StatusDamageBonus);
+
+    // Only the attack stat's up/down statuses matter to this hero; Weakness always does.
+    public override int StatusDamageBonus => Class.attackStat == AttackStat.Strength
+        ? Statuses.Total(EnemyStatusEffectType.StrengthUp) - Statuses.Total(EnemyStatusEffectType.StrengthDown) - Statuses.Total(EnemyStatusEffectType.Weakness)
+        : Statuses.Total(EnemyStatusEffectType.MagicUp) - Statuses.Total(EnemyStatusEffectType.MagicDown) - Statuses.Total(EnemyStatusEffectType.Weakness);
+    public int StatusAttackModifier => StatusRollMod;
 
     public int AttackStatValue => Class.attackStat == AttackStat.Strength ? Str : Mag;
-    public int AttackModifier => Balance.AttackMod(AttackStatValue);
+    public int AttackModifier => Balance.AttackMod(AttackStatValue) + StatusRollMod;
 
     public int CheatCost(string cheatId, int baseCost) {
         int cost = baseCost;

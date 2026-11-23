@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Main menu with parallax FREE\Editor\MenuEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\BattleHudMigrator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

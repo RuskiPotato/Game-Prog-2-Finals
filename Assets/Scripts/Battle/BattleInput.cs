@@ -5,6 +5,8 @@ public class BattleInput {
     readonly BattleContext ctx;
 
     public PlayerAction ChosenAction;
+    public CombatCardInstance ChosenCombatCard;
+    public SkillData ChosenSkill;
     public Reaction ChosenReaction;
     public bool AcceptingReaction;
     public bool ContinuePressed;
@@ -16,6 +18,19 @@ public class BattleInput {
 
     public void PressAttack() => Choose(PlayerAction.Attack);
     public void PressDefend() => Choose(PlayerAction.Defend);
+    public void PressSkill(SkillData skill) {
+        if (skill == null || !ctx.CanAct || ChosenAction != PlayerAction.None || !ctx.Cooldowns.IsReady(skill)) return;
+        ChosenSkill = skill;
+        Choose(PlayerAction.Skill);
+    }
+    public void PressCombatCard(CombatCardData card) {
+        if (card != null) PressCombatCard(new CombatCardInstance(card));
+    }
+    public void PressCombatCard(CombatCardInstance card) {
+        if (card == null || !ctx.CanAct || ChosenAction != PlayerAction.None) return;
+        ChosenCombatCard = card;
+        Choose(card.Data.action == CombatCardAction.Attack ? PlayerAction.Attack : PlayerAction.Defend);
+    }
 
     void Choose(PlayerAction a) {
         if (!ctx.CanAct || ChosenAction != PlayerAction.None) return;

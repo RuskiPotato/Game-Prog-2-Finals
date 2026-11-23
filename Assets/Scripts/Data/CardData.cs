@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Abstract ScriptableObject base for every card. AttackCardData, DefendCardData and CheatData derive from it.
+// Shared ScriptableObject base for core actions, collectible combat cards, and separate cheats.
 public abstract class CardData : ScriptableObject, ICard {
     [Header("Card")]
     public Sprite art;

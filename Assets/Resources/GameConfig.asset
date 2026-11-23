@@ -16,11 +16,16 @@ MonoBehaviour:
   run: {fileID: 11400000, guid: 781f1b2364c3f414f8d28fcf1f5c62f7, type: 2}
   cheats: {fileID: 11400000, guid: 78b621ca541a8b243a8ab0b9f94e1d14, type: 2}
   hand:
-  - {fileID: 11400000, guid: 6cd539ea45d0f884ea9c166440598c1b, type: 2}
-  - {fileID: 11400000, guid: 2f3a7cca36c3a7444bbb31cb082cba50, type: 2}
-  - {fileID: 11400000, guid: a6060db8532857142aebde92e9fe6a33, type: 2}
-  - {fileID: 11400000, guid: 73080ae15dc50484eafe40ea87b6fed2, type: 2}
-  - {fileID: 11400000, guid: ddcfac39fdd766b47aa379363e27aadc, type: 2}
+  - {fileID: 11400000, guid: 9ed530e777325e54c9fdf22b8b490510, type: 2}
+  - {fileID: 11400000, guid: cf5c8184debdb0d40913ae8322f81990, type: 2}
+  combatDeck:
+  - {fileID: 11400000, guid: 8496935908c3471989a140a28d78e2ed, type: 2}
+  - {fileID: 11400000, guid: 192e10d0bfa94d4eb1ed743c374fabcc, type: 2}
+  - {fileID: 11400000, guid: 8683553e274a47c5938e3ebc8fdf7b96, type: 2}
+  - {fileID: 11400000, guid: 1236011f47da4124a56b29a568cd3e27, type: 2}
+  - {fileID: 11400000, guid: 9ed530e777325e54c9fdf22b8b490510, type: 2}
+  - {fileID: 11400000, guid: cf5c8184debdb0d40913ae8322f81990, type: 2}
+  combatHandSize: 5
   dummy: {fileID: 11400000, guid: 65edf6642ad14a74a8e914781b793154, type: 2}
   scriptedBrute: {fileID: 11400000, guid: 14ed76594098e2f4a87bb45f8e80c919, type: 2}
   fights:

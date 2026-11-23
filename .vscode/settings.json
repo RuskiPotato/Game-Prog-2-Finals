@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Paperboard God.sln"
+    "dotnet.defaultSolution": "paperboard_project.sln"
 }

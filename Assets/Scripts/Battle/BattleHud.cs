@@ -1,81 +1,34 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+using UnityEngine.InputSystem;
+#endif
 
-// Everything on screen. No game rules here: it shows a BattleContext and raises events.
-//
-// Layout (see README_Layout.txt):
-//   left edge  : Morale bar (vertical)          right edge : Suspicion bar (vertical)
-//   top centre : Fate diamond, Gold beside it
-//   gap between Morale bar and Fate     : hero profile (name, HP, Audacity pips)
-//   gap between Fate and Suspicion bar  : enemy profile (name, HP)
-//   under the field: turn-order text row
-public class BattleHud : MonoBehaviour, IBattleView {
-    [Header("Top centre: Fate (hidden until the reveal)")]
-    public GameObject fatePanel;               // holds the diamond + texts
-    public DiamondMeter fateMeter;             // fills 0-100
-    public TMP_Text fateValueText;             // 70
-    public TMP_Text tierText;                  // Furious
-    public TMP_Text maliceText;                // "Malice dice: 3 (rolling 4)"
-    public TMP_Text goldText;                  // beside the Fate frame; keep it OUTSIDE fatePanel so it is always visible
-
-    [Header("Right edge: Suspicion (vertical bar, hidden until the reveal)")]
-    public GameObject suspicionPanel;
-    public Slider suspicionBar;                // Min 0, Max 1, Direction Bottom To Top
-    public TMP_Text suspicionTierText;         // Watching
-    public TMP_Text suspicionDetailText;       // 30/100  -  check DC 11
-
-    [Header("Left edge: Morale (vertical bar, party play only)")]
-    public GameObject moralePanel;             // hidden until the reveal, and always hidden in solo (FateState.SoloMode)
-    public Slider moraleBar;                   // Min 0, Max 1, Direction Bottom To Top
-    public TMP_Text moraleTierText;            // Steady
-    public TMP_Text moraleDetailText;          // 55/100  -  rolls +0
-
-    [Header("Under-unit HP (always visible, below each unit's image)")]
-    public UnitHpTag heroHpTag, enemyHpTag;
-
-    [Header("Profiles (the gaps beside the Fate frame)")]
-    public GameObject heroProfilePanel;        // between Morale bar and Fate
-    public TMP_Text heroText;                  // "Rogue  HP 24/30"
-    public Slider heroHpBar;                   // optional, Min 0, Max 1
-    public AudacityPips audacityPips;          // optional
-    public TMP_Text audacityText;              // optional, "Audacity: 3"
-    public bool heroProfileAlwaysVisible = false;   
-
-    public TMP_Text enemyText;                 // "Goblin Hustler  HP 9/14" (no HP in the scripted fight)
-    public Slider enemyHpBar;                  // optional, hidden in the scripted fight
+// The HUD's front door. It implements IBattleView for the battle logic and owns the things that are about input:
+// the hand, the cheat panel, the reaction pop-up, the log and the GM taunt.
+// Numbers/profiles live in BattleStatusView; dice + clash animation live in ClashPresenter. Put all three on the same object.
+public partial class BattleHud : MonoBehaviour, IBattleView {
+    [Header("Parts (auto-found on this object if left empty)")]
+    public BattleStatusView statusView;
+    public ClashPresenter clashPresenter;
 
     [Header("Game Master taunt")]
     public GameObject gmPanel;
     public TMP_Text gmText;
-    public float gmAutoHideSeconds = 0f;       // 0 = stays until the next line
+    public float gmAutoHideSeconds = 0f;
 
-    [Header("Field")]
+    [Header("Log")]
     public TMP_Text logText;
-    public TMP_Text oddsText;                  // optional
-    public DiceTray diceTray;                  // the hero's real dice, above the hero
-    public DiceTray enemyDiceTray;             // the enemy's VISUAL-ONLY dice, above the enemy (optional)
-    public TMP_Text turnOrderText;             // "Round 2   Rogue > Goblin Hustler" (active unit highlighted)
-    public string activeColorHex = "FFD35A";
-    public string turnOrderSeparator = "  vs  ";
-    public bool showEnemyLandChance = false;    // Real mode: show "X% to land if you miss" on the enemy card
-
-    [Header("Clash cards (the two cards facing off)")]
-    public GameObject heroActionPanel;         // shows what the hero committed to; hidden until they choose
-    public TMP_Text heroActionText;            // "Attack  -  27.5% to hit"
-    public GameObject enemyActionPanel;        // the enemy's telegraphed attack
-    public TMP_Text enemyActionText;           // "Goblin Claw\nd4+1 damage\n4 dice"
-
-    [Header("Passives (side panels, shown only while that unit is selected)")]
-    public UnitSelectable heroSelectable, enemySelectable;
-    public PassivesPanel heroPassives, enemyPassives;
 
     [Header("Hand")]
     public HandView hand;
+
+    [Header("Cheat Panel")]
+    public CheatPanelView cheatPanel;
 
     [Header("Pop-ups")]
     public GameObject reactionPanel;
@@ -84,175 +37,78 @@ public class BattleHud : MonoBehaviour, IBattleView {
     public event Action AcceptClicked, RerollClicked, ContinueClicked;
     public event Action<ICard> CardClicked;
 
-    enum Selected { None, Hero, Enemy }
-    Selected selected = Selected.None;
+    readonly List<ICard> lastCombatCards = new List<ICard>();
     BattleContext lastCtx;
     Coroutine gmHide;
-    List<Unit> turnOrder = new List<Unit>();
 
     static void SetText(TMP_Text t, string s) { if (t != null) t.text = s; }
     static void SetActive(GameObject g, bool on) { if (g != null && g.activeSelf != on) g.SetActive(on); }
 
     void Awake() {
-        acceptBtn.onClick.AddListener(() => AcceptClicked?.Invoke());
-        rerollBtn.onClick.AddListener(() => RerollClicked?.Invoke());
-        continueBtn.onClick.AddListener(() => ContinueClicked?.Invoke());
-        hand.CardClicked += card => CardClicked?.Invoke(card);
-        reactionPanel.SetActive(false);
-        continueBtn.gameObject.SetActive(false);
+        if (statusView == null) statusView = GetComponentInChildren<BattleStatusView>(true);
+        if (statusView == null) statusView = FindFirstObjectByType<BattleStatusView>();
+        if (clashPresenter == null) clashPresenter = GetComponentInChildren<ClashPresenter>(true);
+        if (clashPresenter == null) clashPresenter = FindFirstObjectByType<ClashPresenter>();
+        if (statusView == null || clashPresenter == null)
+            Debug.LogError("BattleHud: add BattleStatusView and ClashPresenter next to it (run Paperboard God > Migrate BattleHud).", this);
 
-        if (heroSelectable != null) heroSelectable.Clicked += _ => Select(Selected.Hero);
-        if (enemySelectable != null) enemySelectable.Clicked += _ => Select(Selected.Enemy);
+        if (acceptBtn != null) acceptBtn.onClick.AddListener(() => AcceptClicked?.Invoke());
+        if (rerollBtn != null) rerollBtn.onClick.AddListener(() => RerollClicked?.Invoke());
+        if (continueBtn != null) continueBtn.onClick.AddListener(() => ContinueClicked?.Invoke());
+        if (hand != null) hand.CardClicked += card => CardClicked?.Invoke(card);
+        if (cheatPanel != null) cheatPanel.CardClicked += card => CardClicked?.Invoke(card);
+        SetActive(reactionPanel, false);
+        if (continueBtn != null) continueBtn.gameObject.SetActive(false);
         SetActive(gmPanel, false);
-        if (heroPassives != null) heroPassives.Hide();
-        if (enemyPassives != null) enemyPassives.Hide();
-        SetActive(heroProfilePanel, heroProfileAlwaysVisible);
+    }
+
+    // Works whichever input system the project uses (Player Settings > Active Input Handling).
+    static bool EscapePressed() {
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+        return Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
+#else
+        return Input.GetKeyDown(KeyCode.Escape);
+#endif
     }
 
     void Update() {
-        if (selected != Selected.None && Input.GetKeyDown(KeyCode.Escape)) Select(Selected.None);
+        if (EscapePressed()) {
+            if (cheatPanel != null && cheatPanel.IsOpen) cheatPanel.Close();
+            else if (statusView != null && statusView.HasSelection) statusView.ClearSelection();
+        }
     }
 
-    public void Initialize(IEnumerable<ICard> cards) => hand.Build(cards);
-
-    // Called by BattleController once initiative is rolled.
-    public void SetTurnOrder(List<Unit> order) {
-        turnOrder = order ?? new List<Unit>();
-        if (lastCtx != null) RefreshTurnOrder(lastCtx);
+    public void Initialize(IEnumerable<ICard> coreCards, IEnumerable<ICard> cheats = null) {
+        if (hand != null) hand.Build(coreCards);
+        if (cheatPanel != null) {
+            cheatPanel.gameObject.SetActive(false);   // keep whatever opens it outside this object
+            cheatPanel.Build(cheats);
+        }
     }
 
-    // Clicking the selected unit again, or pressing Esc, clears the selection.
-    void Select(Selected which) {
-        selected = selected == which ? Selected.None : which;
-        if (lastCtx != null) RefreshSelection(lastCtx);
+    // ---- Hand ----
+    // Hand = core Attack/Defend + the combat-card deck's hand + the hero's skills.
+    public void RefreshCombatHand(CardDeck deck, IEnumerable<CardData> coreCards, IEnumerable<ICard> skills = null) {
+        if (deck == null) return;
+        var cards = deck.BuildVisibleCards(coreCards);
+        if (skills != null) cards.AddRange(skills);
+        bool changed = cards.Count != lastCombatCards.Count;
+        if (!changed) for (int i = 0; i < cards.Count; i++) if (!ReferenceEquals(cards[i], lastCombatCards[i])) { changed = true; break; }
+        if (changed) {
+            lastCombatCards.Clear(); lastCombatCards.AddRange(cards);
+            if (hand != null) hand.Build(cards);
+        }
+        if (lastCtx != null && hand != null) hand.Refresh(lastCtx);
     }
+
+    public void SetTurnOrder(List<Unit> order) { if (statusView != null) statusView.SetTurnOrder(order); }
 
     public void Refresh(BattleContext ctx) {
         lastCtx = ctx;
-        var fate = ctx.Fate;
-        bool revealed = ctx.Progress.FateBarRevealed;
-
-        // Fate: diamond
-        SetActive(fatePanel, revealed);
-        if (fateMeter != null) fateMeter.SetValue(fate.Fate / 100f);
-        SetText(fateValueText, fate.Fate.ToString());
-        SetText(tierText, fate.TierName);
-        SetText(maliceText, $"Malice dice: {fate.MaliceDice}  (rolling {ctx.CurrentDice})");
-        SetText(goldText, $"Gold: {fate.Gold}");
-
-        // Suspicion: right-edge bar
-        SetActive(suspicionPanel, revealed);
-        if (suspicionBar != null) suspicionBar.value = fate.Suspicion / 100f;
-        var sTier = SuspicionInfo.TierOf(fate.Suspicion);
-        SetText(suspicionTierText, sTier.ToString());
-        SetText(suspicionDetailText, $"{fate.Suspicion}/100  -  check DC {SuspicionInfo.CheckDc(fate.Suspicion)}");
-
-        // Morale: left-edge bar (party only)
-        SetActive(moralePanel, revealed && !fate.SoloMode);
-        if (moraleBar != null) moraleBar.value = fate.Morale / 100f;
-        string mName = MoraleName(fate.Morale);
-        SetText(moraleTierText, mName);
-        SetText(moraleDetailText, $"{fate.Morale}/100  -  rolls {fate.MoraleModifier:+0;-0;+0}");
-
-        if (oddsText != null) {
-            oddsText.gameObject.SetActive(!ctx.Scripted);            // odds hidden until the reveal
-            float p = Odds.HitChance(ctx.Enemy.DefenseDc, ctx.RollMod, ctx.CurrentDice) * 100f;
-            oddsText.text = $"Hit chance: {p:0.0}%  (need {ctx.Enemy.DefenseDc - ctx.RollMod}+ on die)";
-        }
-
-        // Profiles
-        SetText(heroText, $"{ctx.Hero.DisplayName}  HP {ctx.Hero.Hp}/{ctx.Hero.MaxHp}");
-        if (heroHpBar != null) heroHpBar.value = ctx.Hero.MaxHp > 0 ? (float)ctx.Hero.Hp / ctx.Hero.MaxHp : 0f;
-        SetText(audacityText, $"Audacity: {fate.Audacity}");
-        if (audacityPips != null) audacityPips.Set(fate.Audacity);
-
-        SetText(enemyText, ctx.Scripted ? ctx.Enemy.DisplayName
-                                        : $"{ctx.Enemy.DisplayName}  HP {ctx.Enemy.Hp}/{ctx.Enemy.MaxHp}");
-        if (enemyHpBar != null) {
-            enemyHpBar.gameObject.SetActive(!ctx.Scripted);          // enemy HP stays hidden in the scripted fight
-            enemyHpBar.value = ctx.Enemy.MaxHp > 0 ? (float)ctx.Enemy.Hp / ctx.Enemy.MaxHp : 0f;
-        }
-
-        if (ctx.State == BattleState.HeroTurn) {               // new round: wipe last round's dice
-            if (diceTray != null) diceTray.Clear();
-            if (enemyDiceTray != null) enemyDiceTray.Clear();
-        }
-        if (heroHpTag != null) heroHpTag.Set(ctx.Hero.DisplayName, ctx.Hero.Hp, ctx.Hero.MaxHp, true);
-        if (enemyHpTag != null) enemyHpTag.Set(ctx.Enemy.DisplayName, ctx.Enemy.Hp, ctx.Enemy.MaxHp, !ctx.Scripted);   // no enemy HP in the scripted fight
-        RefreshClashCards(ctx);
-        RefreshSelection(ctx);
-        RefreshTurnOrder(ctx);
-        hand.Refresh(ctx);
-    }
-
-    // ---- tiers ----
-    // Same thresholds as FateState.MoraleModifier: 61+, 50-60, 30-49, 0-29
-    static string MoraleName(int morale) =>
-        morale >= 61 ? "Confident" : morale >= 50 ? "Steady" : morale >= 30 ? "Wavering" : "Breaking";
-
-    // ---- clash cards ----
-    void RefreshClashCards(BattleContext ctx) {
-        if (enemyActionText != null) {
-            var d = ctx.Enemy.Data;
-            string name = string.IsNullOrEmpty(d.attackName) ? "Attack" : d.attackName;
-            SetActive(enemyActionPanel, d.attacks);
-            enemyActionText.text = ctx.Scripted
-                ? name
-                : $"{name}\nd{d.damageDie}{d.damageBonus:+0;-0;+0} damage\n{1 + ctx.Fate.MaliceDice} dice, keep highest"
-                  + (showEnemyLandChance
-                      ? $"\n{Odds.EnemyHitChance(ctx.Hero.DefenseDc, ctx.Enemy.AttackModifier, 1 + ctx.Fate.MaliceDice) * 100f:0.0}% to land if you miss"
-                      : "");
-        }
-
-        bool committed = ctx.ChosenAction != PlayerAction.None;
-        SetActive(heroActionPanel, committed);
-        if (heroActionText != null && committed) {
-            if (ctx.ChosenAction == PlayerAction.Attack)
-                heroActionText.text = ctx.Scripted ? "Attack"
-                    : $"Attack\n{Odds.HitChance(ctx.Enemy.DefenseDc, ctx.RollMod, ctx.CurrentDice) * 100f:0.0}% to hit";
-            else heroActionText.text = "Defend\nHalve the hit";
-        }
-    }
-
-   //profile passive selection
-    void RefreshSelection(BattleContext ctx) {
-        SetActive(heroProfilePanel, heroProfileAlwaysVisible || selected == Selected.Hero);
-        if (heroSelectable != null) heroSelectable.SetSelected(selected == Selected.Hero);
-        if (enemySelectable != null) enemySelectable.SetSelected(selected == Selected.Enemy);
-
-        if (selected == Selected.Hero && heroPassives != null) {
-            var lines = new List<string>(ctx.Hero.Class.passives);
-            if (ctx.Progress.FateBarRevealed && ctx.Fate.MaliceDice > 0)
-                lines.Insert(0, $"Jinxed: Destiny adds {ctx.Fate.MaliceDice} Malice dice (keep lowest)");
-            heroPassives.Show(ctx.Hero.DisplayName, lines);
-        } else if (heroPassives != null) heroPassives.Hide();
-
-        if (selected == Selected.Enemy && enemyPassives != null)
-            enemyPassives.Show(ctx.Enemy.DisplayName, ctx.Enemy.Data.passives);
-        else if (enemyPassives != null) enemyPassives.Hide();
-    }
-
-    // Turn Order
-    void RefreshTurnOrder(BattleContext ctx) {
-        if (turnOrderText == null) return;
-        if (turnOrder.Count == 0) { turnOrderText.text = ""; return; }
-
-        Unit active = null;
-        switch (ctx.State) {
-            case BattleState.HeroTurn: case BattleState.Roll: case BattleState.Resolve: active = ctx.Hero; break;
-            case BattleState.EnemyTurn: active = ctx.Enemy; break;
-        }
-
-        var sb = new StringBuilder();
-        if (ctx.Round > 0) sb.Append("Round ").Append(ctx.Round).Append("   ");
-        for (int i = 0; i < turnOrder.Count; i++) {
-            if (i > 0) sb.Append(turnOrderSeparator);
-            var u = turnOrder[i];
-            string name = u.IsDead ? $"<s>{u.DisplayName}</s>" : u.DisplayName;
-            if (u == active) sb.Append("<b><color=#").Append(activeColorHex).Append('>').Append(name).Append("</color></b>");
-            else sb.Append(name);
-        }
-        turnOrderText.text = sb.ToString();
+        if (statusView != null) statusView.Refresh(ctx);
+        if (ctx.State == BattleState.HeroTurn && clashPresenter != null) clashPresenter.ClearDice();
+        if (hand != null) hand.Refresh(ctx);
+        if (cheatPanel != null) cheatPanel.Refresh(ctx);
     }
 
     // ---- IBattleView ----
@@ -271,14 +127,14 @@ public class BattleHud : MonoBehaviour, IBattleView {
         gmHide = null;
     }
 
-    public IEnumerator Tumble(int diceCount) => diceTray.Tumble(diceCount);
-    public void ShowRoll(RollResult roll) => diceTray.ShowRoll(roll);
+    public IEnumerator Tumble(int diceCount) => clashPresenter.Tumble(diceCount);
+    public void ShowRoll(RollResult roll) => clashPresenter.ShowRoll(roll);   // null-safe inside ClashPresenter
+    public IEnumerator TumbleEnemy(int diceCount) => clashPresenter.TumbleEnemy(diceCount);
+    public void ShowEnemyRoll(int[] dice, int keptIndex) => clashPresenter.ShowEnemyRoll(dice, keptIndex);
+    public IEnumerator TumbleClash(int heroDiceCount, int enemyDiceCount) => clashPresenter.TumbleClash(heroDiceCount, enemyDiceCount);
+    public IEnumerator ClashApproach() => clashPresenter.ClashApproach();
+    public IEnumerator ClashOutcome(bool heroWon, bool enemyWon) => clashPresenter.ClashOutcome(heroWon, enemyWon);
 
-    public IEnumerator TumbleEnemy(int diceCount) {
-        if (enemyDiceTray == null) yield break;
-        yield return enemyDiceTray.Tumble(diceCount);
-    }
-    public void ShowEnemyRoll(int[] dice, int keptIndex) { if (enemyDiceTray != null) enemyDiceTray.ShowValues(dice, keptIndex); }
-    public void ShowReactionPanel(bool visible) => reactionPanel.SetActive(visible);
-    public void ShowContinue(bool visible) => continueBtn.gameObject.SetActive(visible);
+    public void ShowReactionPanel(bool visible) => SetActive(reactionPanel, visible);
+    public void ShowContinue(bool visible) { if (continueBtn != null) continueBtn.gameObject.SetActive(visible); }
 }

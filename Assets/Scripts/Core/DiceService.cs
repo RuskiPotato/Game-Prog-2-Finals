@@ -4,7 +4,10 @@ public readonly struct RollResult {
     public readonly int[] Dice;
     public readonly int Lowest;
     public readonly bool Fumble;
-    public RollResult(int[] dice, int lowest, bool fumble) { Dice = dice; Lowest = lowest; Fumble = fumble; }
+    public readonly int LowestIndex;
+    public RollResult(int[] dice, int lowest, bool fumble, int lowestIndex = 0) {
+        Dice = dice; Lowest = lowest; Fumble = fumble; LowestIndex = lowestIndex;
+    }
 }
 
 // The ONLY place combat dice are generated, always from the Combat stream.
@@ -38,28 +41,30 @@ public static class DiceService {
     public static RollResult RollMalice(int n, int sides = 20) {
         var dice = new int[n];
         int lowest = int.MaxValue;
+        int lowestIndex = 0;
         bool fumble = false;
         for (int i = 0; i < n; i++) {
             int v = R.Next(1, sides + 1);
             dice[i] = v;
-            if (v < lowest) lowest = v;
+            if (v < lowest) { lowest = v; lowestIndex = i; }
             if (v == 1) fumble = true;
         }
-        return new RollResult(dice, lowest, fumble);
+        return new RollResult(dice, lowest, fumble, lowestIndex);
     }
 
     // Scripted loss: one die is guaranteed below minNeeded, so the check fails.
     public static RollResult RollForcedMiss(int n, int minNeeded, int sides = 20) {
         var dice = new int[n];
         int lowest = int.MaxValue;
+        int lowestIndex = 0;
         bool fumble = false;
         int rigged = R.Next(0, n);
         for (int i = 0; i < n; i++) {
             int v = (i == rigged) ? R.Next(1, Math.Max(2, minNeeded)) : R.Next(1, sides + 1);
             dice[i] = v;
-            if (v < lowest) lowest = v;
+            if (v < lowest) { lowest = v; lowestIndex = i; }
             if (v == 1) fumble = true;
         }
-        return new RollResult(dice, lowest, fumble);
+        return new RollResult(dice, lowest, fumble, lowestIndex);
     }
 }

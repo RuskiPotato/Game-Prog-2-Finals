@@ -3,21 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// The cheat menu. Owns the panel, its Open / Close buttons and one CardView per cheat.
-// Cards are positioned by the Grid Layout Group on GridRoot: this script never moves them,
-// it only scales a card slightly on hover, so the layout group stays in charge.
-//
-// Put this script on an object that is ALWAYS ACTIVE (for example GamePanels or an empty CheatMenu),
-// not on CheatPanel itself, because CheatPanel is hidden at the start.
 public class CheatPanelView : MonoBehaviour {
     [Header("Panel")]
-    public GameObject panel;                 // CheatPanel (hidden at the start)
-    public RectTransform gridRoot;           // CheatContainer: the object with the Grid Layout Group
-    public CardView cardPrefab;              // a CheatCard prefab with a CardView on it
+    public GameObject panel;                
+    public RectTransform gridRoot;          
+    public CardView cardPrefab;              
 
     [Header("Buttons")]
-    public Button openButton;                // the "Cheats" button on the bottom bar
-    public Button closeButton;               // the X in the header
+    public Button openButton;              
+    public Button closeButton;              
     public bool hideOpenButtonUntilUnlocked = true;
 
     [Header("Hover")]
@@ -35,7 +29,7 @@ public class CheatPanelView : MonoBehaviour {
         SetPanel(false);
     }
 
-    // One card per cheat in the registry (called once by BattleHud.Initialize)
+
     public void Build(IEnumerable<ICard> cheats) {
         Clear();
         if (cheats == null) return;
@@ -49,7 +43,6 @@ public class CheatPanelView : MonoBehaviour {
             var view = Instantiate(cardPrefab, gridRoot);
             var captured = card;
             view.Clicked += () => CardClicked?.Invoke(captured);
-            view.HoverChanged += over => view.transform.localScale = over ? Vector3.one * hoverScale : Vector3.one;
             order.Add(card);
             views[card] = view;
         }

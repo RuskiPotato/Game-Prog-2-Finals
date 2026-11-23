@@ -14,7 +14,10 @@ public class EnemyData : ScriptableObject {
     public int damageBonus = 1;
     public int goldReward = 15;
     public bool attacks = true;      // false for the Training Dummy
-    public string attackName = "Attack";   // shown on the enemy's clash card, e.g. "Goblin Claw"
+    public string attackName = "Attack";   // fallback when no move assets are assigned
+
+    [Header("Weighted AI") ]
+    public List<EnemyMoveData> moves = new List<EnemyMoveData>();
 
     [Header("Display")]
     [TextArea] public List<string> passives = new List<string>();   // shown in the side panel when the enemy is selected

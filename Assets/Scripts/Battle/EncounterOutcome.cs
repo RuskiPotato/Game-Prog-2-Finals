@@ -23,9 +23,9 @@ public class EncounterOutcome {
         fate.EndEncounter(ctx.CheatedThisFight, ctx.FailedThisFight);
 
         if (ctx.Progress.Phase == GamePhase.Tutorial) {
-            yield return WaitContinue(ctx, "Dummy defeated. Party setup: solo Rogue (party setup comes later).");
+            yield return WaitContinue(ctx, "Dummy defeated.");
             ctx.Progress.Phase = GamePhase.FirstEncounter;
-            fate.SetPhase(GamePhase.FirstEncounter);          // Fate 70, bar still hidden
+            fate.SetPhase(GamePhase.FirstEncounter);        
             gm.LoadScene("Battle");
             yield break;
         }
@@ -62,13 +62,13 @@ public class EncounterOutcome {
             ctx.View.SetGm("Destiny: \"Is that really the best you can do?\"");
             yield return WaitContinue(ctx, "Table Wipe.");
 
-            ctx.Progress.Phase = GamePhase.Normal;            // reveal: bar appears, first cheats unlock
+            ctx.Progress.Phase = GamePhase.Normal;            // reveal, new cheats
             foreach (var id in GameManager.FirstUnlocks) ctx.Progress.Unlock(id);
             fate.SetPhase(GamePhase.Normal);
             ctx.Hero.FullHeal();
             ctx.RaiseChanged();
-            yield return WaitContinue(ctx, "The Fate bar appears. Destiny is rigging every roll. Time to cheat back. " +
-                                           "Unlocked: Loaded Dice, Bargain with Fate, Sleight of Hand.");
+            yield return WaitContinue(ctx, "The Fate bar appears. Destiny is rigging every roll. Time to cheat back. "); 
+
             gm.LoadScene("Battle");
         } else {
             yield return WaitContinue(ctx, "Table Wipe. The run is over.");

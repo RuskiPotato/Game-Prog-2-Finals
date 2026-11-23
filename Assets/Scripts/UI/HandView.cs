@@ -24,7 +24,13 @@ public class HandView : MonoBehaviour {
     readonly List<CardView> visible = new List<CardView>();
     CardView hovered, lastHovered;
 
+    public void Clear() {
+        foreach (var view in views.Values) if (view != null) Destroy(view.gameObject);
+        order.Clear(); views.Clear(); visible.Clear(); hovered = lastHovered = null;
+    }
+
     public void Build(IEnumerable<ICard> cards) {
+        Clear();
         foreach (var card in cards) {
             if (card == null) continue;
             var view = Instantiate(cardPrefab, handRoot);

@@ -4,18 +4,14 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-// One card on screen. Pure view: HandView tells it where to be, ICard tells it what to say.
+
 public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
     [Header("Slots")]
     public RectTransform rect;
     public TMP_Text titleText, costText, detailText;
-    public Image artImage;                 // optional
+    public Image artImage;               
     public Image frame;
     public CanvasGroup canvasGroup;
-
-    [Header("Colours")]
-    public Color actionColor = new Color(0.88f, 0.88f, 0.88f);
-    public Color cheatColor = new Color(0.55f, 0.90f, 0.85f);
 
     public event Action Clicked;
     public event Action<bool> HoverChanged;
@@ -30,12 +26,11 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         costText.text = cost;
         detailText.text = detail;
         if (artImage != null) { artImage.sprite = art; artImage.enabled = art != null; }
-        frame.color = kind == CardKind.Cheat ? cheatColor : actionColor;
         playable = canPlay;
         canvasGroup.alpha = canPlay ? 1f : 0.55f;
     }
 
-    // Smoothly moves toward a pose (k is the lerp factor for this frame)
+  
     public void Animate(Vector2 targetPos, float targetRot, float targetScale, float k) {
         if (!posed) { pos = targetPos; rot = targetRot; scale = targetScale; posed = true; }
         else {
