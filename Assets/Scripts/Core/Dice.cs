@@ -16,17 +16,31 @@ public class Dice : MonoBehaviour {
     public Color maliceNormal = Color.white;
     public Color maliceLowest = new Color(0.7f, 0.3f, 1f);
 
+    [Header("Fortune Die (optional distinct look)")]
+    public Sprite fortuneSprite;
+    public Color fortuneNormal = new Color(0.35f, 0.85f, 0.55f);
+    public Color fortuneKept = new Color(0.15f, 1f, 0.4f);
+
     Sprite prefabSprite;
     bool captured;
 
     public void Show(int value, bool isLowest) => Show(value, isLowest, false);
 
-    public void Show(int value, bool isKept, bool isMalice) {
+    public void Show(int value, bool isKept, bool isMalice) =>
+        Show(value, isKept, isMalice, false);
+
+    public void Show(int value, bool isKept, bool isMalice, bool isFortune) {
         gameObject.SetActive(true);
         if (!captured) { prefabSprite = background.sprite; captured = true; }
 
         label.text = value.ToString();
-        if (isMalice) {
+        if (isFortune) {
+            background.sprite = fortuneSprite != null
+                ? fortuneSprite
+                : normalSprite != null ? normalSprite : prefabSprite;
+            background.color = isKept ? fortuneKept : fortuneNormal;
+        }
+        else if (isMalice) {
             if (maliceSprite != null) background.sprite = maliceSprite;
             else background.sprite = normalSprite != null ? normalSprite : prefabSprite;
             background.color = isKept ? maliceLowest : maliceNormal;

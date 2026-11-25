@@ -23,4 +23,8 @@ MonoBehaviour:
   goldReward: 60
   attacks: 1
   attackName: Club Crush
+  moves:
+  - {fileID: 11400000, guid: 2102388bcc05259438f21ba5de6a5cab, type: 2}
+  - {fileID: 11400000, guid: d523f0a59dd365c4eb8046598b205ff5, type: 2}
+  - {fileID: 11400000, guid: e75a55245348d79499aa1ec3442e4788, type: 2}
   passives: []

@@ -1,116 +1,383 @@
 using System.Collections;
 using UnityEngine;
 
-// Resolves one hero attack: roll, optional Loaded Dice reroll window, Fate change, damage.
-public class HeroAttackResolver {
+// Resolves a hero attack and, in Real mode, the opposed clash.
+public class HeroAttackResolver
+{
     readonly BattleInput input;
-    readonly ICheat rerollCheat;          // Loaded Dice, used after a miss
+    readonly ICheat rerollCheat;
+    readonly EnemyDiceMode enemyDiceMode;
 
-    public HeroAttackResolver(BattleInput input, ICheat rerollCheat) {
+    public HeroAttackResolver(
+        BattleInput input,
+        ICheat rerollCheat,
+        EnemyDiceMode enemyDiceMode = EnemyDiceMode.Real)
+    {
         this.input = input;
         this.rerollCheat = rerollCheat;
+        this.enemyDiceMode = enemyDiceMode;
     }
 
-    static RollResult Roll(BattleContext ctx, int n, int needed) =>
-        ctx.Scripted ? DiceService.RollForcedMiss(n, needed) : DiceService.RollMalice(n);
+    static RollResult Roll(
+        BattleContext ctx,
+        int diceCount,
+        int minNeeded)
+    {
+        if (ctx.Scripted)
+            return DiceService.RollForcedMiss(diceCount, minNeeded);
 
-    bool CanReroll(BattleContext ctx) =>
-        rerollCheat != null
-        && ctx.Progress.IsUnlocked(rerollCheat.Id)
-        && rerollCheat.CanUse(ctx)
-        && ctx.Fate.Audacity >= CheatRunner.AudacityCost(rerollCheat, ctx);
+        return ctx.HasFortuneDie
+            ? DiceService.RollMaliceWithFortune(diceCount)
+            : DiceService.RollMalice(diceCount);
+    }
 
-    public IEnumerator Run(BattleContext ctx) {
+    bool CanReroll(BattleContext ctx)
+    {
+        return rerollCheat != null
+            && ctx.Progress.IsUnlocked(rerollCheat.Id)
+            && rerollCheat.CanUse(ctx)
+            && ctx.Fate.Audacity >= CheatRunner.AudacityCost(rerollCheat, ctx);
+    }
+
+    public IEnumerator Run(BattleContext ctx)
+    {
         ctx.State = BattleState.Roll;
+
         var fate = ctx.Fate;
         var enemy = ctx.Enemy;
+
         int mod = ctx.RollMod;
         int dc = enemy.DefenseDc;
-        int needed = dc - mod;
-        int n = ctx.CurrentDice;
-        bool boosted = ctx.RemovedMaliceDice > 0 || ctx.SleightArmed;
+        int heroDiceCount = ctx.CurrentDice;
 
-        // Roll both sides before revealing either result. The enemy roll is real, seeded,
-        // and uses Destiny's existing highest-of-(1 + Malice) rule.
-        var roll = Roll(ctx, n, needed);
-        if (ctx.SleightArmed) {
-            var second = Roll(ctx, n, needed);
-            if (second.Lowest > roll.Lowest) roll = second;
-        }
+        bool boosted =
+            ctx.RemovedMaliceDice > 0 ||
+            ctx.SleightArmed;
 
+        // An opposed clash only happens against an enemy
+        // whose currently selected move is an attack.
         bool hasEnemyAttack = enemy.AttacksThisTurn;
-        int enemyCount = 0;
-        if (hasEnemyAttack) {
-            enemyCount = 1 + fate.MaliceDice;
-            ctx.EnemyClashBest = DiceService.RollHighestDice(enemyCount,
-                out ctx.EnemyClashDice, out ctx.EnemyClashKeptIndex);
+
+        bool opposed =
+            hasEnemyAttack &&
+            enemyDiceMode == EnemyDiceMode.Real;
+
+        int enemyDiceCount = 0;
+        int enemyTotal = 0;
+        int fortuneIndex = ctx.HasFortuneDie ? heroDiceCount : -1;
+        int shownHeroDiceCount = heroDiceCount + (ctx.HasFortuneDie ? 1 : 0);
+
+        if (opposed)
+        {
+            enemyDiceCount = 1 + fate.MaliceDice;
+
+            ctx.EnemyClashBest = DiceService.RollHighestDice(
+                enemyDiceCount,
+                out ctx.EnemyClashDice,
+                out ctx.EnemyClashKeptIndex
+            );
+
             ctx.EnemyClashRollPrepared = true;
+
+            enemyTotal =
+                ctx.EnemyClashBest + enemy.AttackModifier;
+
+            ctx.EnemyClashTotal = enemyTotal;
         }
 
+        // In a scripted encounter, ensure the hero cannot win.
+        int scriptedCap;
+
+        if (opposed)
+        {
+            scriptedCap = Mathf.Max(
+                2,
+                enemyTotal - mod + 1
+            );
+        }
+        else
+        {
+            scriptedCap = Mathf.Max(2, dc - mod);
+        }
+
+        var roll = Roll(
+            ctx,
+            heroDiceCount,
+            scriptedCap
+        );
+
+        if (ctx.SleightArmed)
+        {
+            var secondRoll = Roll(
+                ctx,
+                heroDiceCount,
+                scriptedCap
+            );
+
+            if (secondRoll.KeptValue > roll.KeptValue)
+                roll = secondRoll;
+        }
+
+        // Reveal the dice.
         yield return ctx.View.ClashApproach();
-        if (hasEnemyAttack) {
-            yield return ctx.View.TumbleClash(n, enemyCount);
+
+        if (opposed)
+        {
+            yield return ctx.View.TumbleClash(
+                shownHeroDiceCount,
+                enemyDiceCount,
+                fortuneIndex
+            );
+
             ctx.View.ShowRoll(roll);
-            ctx.View.ShowEnemyRoll(ctx.EnemyClashDice, ctx.EnemyClashKeptIndex);
-        } else {
-            yield return ctx.View.Tumble(n);
+
+            ctx.View.ShowEnemyRoll(
+                ctx.EnemyClashDice,
+                ctx.EnemyClashKeptIndex
+            );
+        }
+        else
+        {
+            yield return ctx.View.Tumble(shownHeroDiceCount, fortuneIndex);
             ctx.View.ShowRoll(roll);
         }
 
         ctx.State = BattleState.Resolve;
-        int total = roll.Lowest + mod;
-        bool success = total >= dc;
 
-        // Loaded Dice rerolls the player's dice only; the enemy's revealed result remains fixed.
-        if (!success && CanReroll(ctx)) {
+        int total = roll.KeptValue + mod;
+
+        ctx.HeroClashTotal = total;
+
+        bool wonClash;
+        bool tiedClash = false;
+
+        if (opposed)
+        {
+            wonClash = !ctx.Scripted &&
+                Balance.WinsClash(
+                    total,
+                    enemyTotal,
+                    true,
+                    dc
+                );
+
+            tiedClash =
+                !ctx.Scripted &&
+                total == enemyTotal;
+        }
+        else
+        {
+            wonClash =
+                !ctx.Scripted &&
+                total >= dc;
+        }
+
+        // Loaded Dice can reroll a lost clash.
+        // The enemy's already-revealed roll remains fixed.
+        if (!wonClash && CanReroll(ctx))
+        {
             input.ChosenReaction = Reaction.None;
             input.AcceptingReaction = true;
+
             ctx.View.ShowReactionPanel(true);
-            ctx.Log($"Miss ({total} vs {dc}). Accept it, or cancel it with Loaded Dice?");
-            yield return new WaitUntil(() => input.ChosenReaction != Reaction.None);
+
+            string targetLabel = opposed
+                ? $"vs Enemy {enemyTotal}"
+                : $"vs DC {dc}";
+
+            ctx.Log(
+                $"Clash lost ({total} {targetLabel}). " +
+                "Accept it, or reroll with Loaded Dice?"
+            );
+
+            yield return new WaitUntil(
+                () => input.ChosenReaction != Reaction.None
+            );
+
             input.AcceptingReaction = false;
             ctx.View.ShowReactionPanel(false);
 
-            if (input.ChosenReaction == Reaction.Reroll && ctx.PayCheat(rerollCheat)) {
+            if (
+                input.ChosenReaction == Reaction.Reroll &&
+                ctx.PayCheat(rerollCheat)
+            )
+            {
                 boosted = true;
-                roll = Roll(ctx, n, needed);
-                yield return ctx.View.Tumble(n);
+
+                // Loaded Dice removes Malice dice before its reroll.
+                heroDiceCount = ctx.CurrentDice;
+                fortuneIndex = ctx.HasFortuneDie ? heroDiceCount : -1;
+                shownHeroDiceCount = heroDiceCount + (ctx.HasFortuneDie ? 1 : 0);
+
+                roll = Roll(
+                    ctx,
+                    heroDiceCount,
+                    scriptedCap
+                );
+
+                yield return ctx.View.Tumble(shownHeroDiceCount, fortuneIndex);
                 ctx.View.ShowRoll(roll);
-                total = roll.Lowest + mod;
-                success = total >= dc;
+
+                total = roll.KeptValue + mod;
+
+                ctx.HeroClashTotal = total;
+
+                if (opposed)
+                {
+                    wonClash =
+                        !ctx.Scripted &&
+                        Balance.WinsClash(
+                            total,
+                            enemyTotal,
+                            true,
+                            dc
+                        );
+
+                    tiedClash =
+                        !ctx.Scripted &&
+                        total == enemyTotal;
+                }
+                else
+                {
+                    wonClash =
+                        !ctx.Scripted &&
+                        total >= dc;
+
+                    tiedClash = false;
+                }
             }
         }
 
-        // Roll-derived attack damage uses the final attack total, including any Loaded Dice reroll.
-        ctx.ResolvePlayerAttackRollDamage(total);
-        ctx.HeroLanded = success;
-        bool defiant = success && boosted && total - dc >= 10;
-        if (defiant) fate.AddFate(fate.DefiantCritDelta);
-        else fate.ApplyRollOutcome(success, total - dc, roll.Fumble);
+        // Determine the damage band using the enemy's Defense DC.
+        RollBand band = Balance.EvaluateBand(
+            total,
+            dc,
+            wonClash,
+            roll.Fumble
+        );
 
-        if (success) {
+        ctx.ResolvePlayerAttackRollDamage(total);
+
+        ctx.HeroLanded = wonClash;
+        ctx.ClashTie = tiedClash;
+
+        bool defiant =
+            band == RollBand.Crushing &&
+            boosted;
+
+        if (defiant)
+            fate.AddFate(fate.DefiantCritDelta);
+        else
+            fate.ApplyRollOutcome(band);
+
+        // Resolve a successful attack.
+        if (wonClash)
+        {
             var skill = ctx.ActiveSkill;
-            int dmg = skill != null ? skill.RollDamage(ctx.Hero, ctx.CardDamageBonus)
-                                    : ctx.Hero.RollDamage() + ctx.CardDamageBonus;
-            if (defiant) dmg *= 2;
-            dmg = enemy.ReceiveHit(dmg);                      // Vulnerable / Guard / shield are applied here
-            string hitsText = skill != null && skill.hits > 1 ? $" ({skill.hits} hits)" : "";
-            ctx.Log(defiant ? $"DEFIANT CRIT! {total} vs {dc}. {dmg} damage{hitsText}."
-                            : $"Hit! {total} vs {dc}. {dmg} damage{hitsText}.");
-            if (skill != null && !enemy.IsDead) SkillEffectRunner.Apply(ctx, skill);
-            if (enemy.IsDead) fate.AddFate(fate.EnemyDefeatedDelta);
-        } else {
-            ctx.Log(roll.Fumble ? $"FUMBLE! ({total} vs {dc})" : $"Miss. {total} vs {dc}");
+
+            int rawDamage = skill != null
+                ? skill.RollDamage(ctx.Hero, ctx.CardDamageBonus)
+                : ctx.Hero.RollDamage() + ctx.CardDamageBonus;
+
+            int damage = Balance.ApplyBandDamage(
+                rawDamage,
+                band,
+                boosted
+            );
+
+            // Preserve the existing damage/status/shield pipeline.
+            damage = enemy.ReceiveHit(damage);
+
+            string comparison = opposed
+                ? $"{total} vs {enemyTotal} (DC {dc})"
+                : $"{total} vs DC {dc}";
+
+            string hitCount =
+                skill != null && skill.hits > 1
+                    ? $" ({skill.hits} hits)"
+                    : "";
+
+            switch (band)
+            {
+                case RollBand.Glancing:
+                    ctx.Log(
+                        $"Glancing Hit! {comparison} — " +
+                        $"half damage ({damage}){hitCount}."
+                    );
+                    break;
+
+                case RollBand.Crushing:
+                    ctx.Log(
+                        defiant
+                            ? $"DEFIANT CRUSH! {comparison} — {damage} damage{hitCount}!"
+                            : $"Crushing Hit! {comparison} — {damage} damage{hitCount}!"
+                    );
+                    break;
+
+                default:
+                    ctx.Log(
+                        $"Hit! {comparison} — {damage} damage{hitCount}."
+                    );
+                    break;
+            }
+
+            // Preserve attack-skill effects.
+            if (skill != null && !enemy.IsDead)
+                SkillEffectRunner.Apply(ctx, skill);
+
+            if (enemy.IsDead)
+                fate.AddFate(fate.EnemyDefeatedDelta);
+        }
+        else if (tiedClash)
+        {
+            ctx.Log(
+                $"CLASH TIE! ({total} vs {enemyTotal}) — " +
+                "Neither side lands a hit."
+            );
+        }
+        else
+        {
+            string comparison = opposed
+                ? $"{total} vs {enemyTotal}"
+                : $"{total} vs DC {dc}";
+
+            ctx.Log(
+                roll.Fumble
+                    ? $"FUMBLE! ({comparison})"
+                    : $"Clash Lost. ({comparison})"
+            );
+
             var taunts = ctx.Game.Config.taunts;
-            if (ctx.Progress.Phase != GamePhase.Tutorial && taunts != null && taunts.Length > 0)
-                ctx.View.SetGm(taunts[Random.Range(0, taunts.Length)]);
+
+            if (
+                ctx.Progress.Phase != GamePhase.Tutorial &&
+                taunts != null &&
+                taunts.Length > 0
+            )
+            {
+                ctx.View.SetGm(
+                    taunts[Random.Range(0, taunts.Length)]
+                );
+            }
         }
 
-        bool enemyLands = hasEnemyAttack && !ctx.Scripted &&
-            (ctx.EnemyClashBest + enemy.AttackModifier >= ctx.Hero.DefenseDc);
-        if (ctx.Scripted) enemyLands = hasEnemyAttack;
-        yield return ctx.View.ClashOutcome(success, enemyLands && !success);
+        bool enemyWinsClash =
+            opposed &&
+            !wonClash &&
+            !tiedClash;
+
+        // In Visual mode, a missed hero attack still lets the enemy land.
+        if (enemyDiceMode == EnemyDiceMode.Visual && hasEnemyAttack)
+            enemyWinsClash = !wonClash;
+
+        yield return ctx.View.ClashOutcome(
+            wonClash,
+            enemyWinsClash,
+            tiedClash
+        );
+
         ctx.RaiseChanged();
+
         yield return new WaitForSeconds(0.35f);
     }
 }

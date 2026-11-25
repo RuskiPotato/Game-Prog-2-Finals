@@ -148,6 +148,7 @@
     <Compile Include="Assets\Scripts\Core\EnemyFakeRoll.cs" />
     <Compile Include="Assets\Scripts\Data\EnemyData.cs" />
     <Compile Include="Assets\Scripts\Core\IDamageable.cs" />
+    <Compile Include="Assets\Scripts\Battle\RollBand.cs" />
     <Compile Include="Assets\Scripts\Battle\SkillEffectRunner.cs" />
     <Compile Include="Assets\Scripts\Battle\EnemyDiceMode.cs" />
     <Compile Include="Assets\Main menu with parallax FREE\Scripts\Arrow.cs" />

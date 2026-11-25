@@ -5,7 +5,7 @@ using UnityEngine;
 // Thin orchestrator: builds the pieces, wires them together, runs the round loop.
 public class BattleController : MonoBehaviour {
     public BattleHud hud;
-    public EnemyDiceMode enemyDice = EnemyDiceMode.Real;   // Visual: cosmetic dice. Real: enemy rolls per the GDD
+    public EnemyDiceMode enemyDice = EnemyDiceMode.Real;  
 
     GameManager gm;
     BattleContext ctx;
@@ -19,7 +19,7 @@ public class BattleController : MonoBehaviour {
 
     void Start() {
         gm = GameManager.Instance;
-        if (gm.Fate == null) gm.NewRun();          // pressing Play inside Battle starts a fresh run
+        if (gm.Fate == null) gm.NewRun();          
         if (gm.Progress.Phase == GamePhase.Normal) EncounterSelector.SkipNonCombatNodes(gm);
 
         var data = EncounterSelector.Pick(gm);
@@ -65,7 +65,7 @@ public class BattleController : MonoBehaviour {
 
     void BuildHandlers(CheatRegistry registry) {
         ICheat reroll = registry != null ? registry.Get("loaded_dice") : null;
-        var attack = new HeroAttackResolver(input, reroll);
+        var attack = new HeroAttackResolver(input, reroll, enemyDice);
         handlers[ctx.Hero] = new PlayerTurnHandler(input, attack, cardDeck);
         handlers[ctx.Enemy] = new EnemyTurnHandler(enemyDice);
     }

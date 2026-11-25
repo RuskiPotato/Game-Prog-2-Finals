@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
@@ -7,7 +8,8 @@ using UnityEngine.UI;
 // Everything that reads battle state and shows numbers: Fate diamond + gold, Suspicion/Morale bars, hero/enemy profiles,
 // HP tags, status lines, passives on selection, the turn-order row, the odds line and both clash cards.
 // BattleHud calls Refresh(ctx); this class never touches input or animation.
-public class BattleStatusView : MonoBehaviour {
+public class BattleStatusView : MonoBehaviour
+{
     [Header("Fate")]
     public GameObject fatePanel;
     public DiamondMeter fateMeter;
@@ -43,7 +45,7 @@ public class BattleStatusView : MonoBehaviour {
     public Slider enemyHpBar;
 
     [Header("Status lines (optional)")]
-    public TMP_Text heroStatusText;      // "Shield 5  |  Attack Down 2 (2t)"
+    public TMP_Text heroStatusText;
     public TMP_Text enemyStatusText;
 
     [Header("Odds / turn order")]
@@ -55,86 +57,158 @@ public class BattleStatusView : MonoBehaviour {
 
     [Header("Clash cards")]
     public GameObject heroActionPanel;
-    public TMP_Text heroActionText;
+    public TMP_Text heroActionNameText;
+    public TMP_Text heroActionDescriptionText;
+
     public GameObject enemyActionPanel;
-    public TMP_Text enemyActionText;
+    public TMP_Text enemyActionNameText;
+    public TMP_Text enemyActionDescriptionText;
 
     [Header("Passives")]
     public UnitSelectable heroSelectable, enemySelectable;
     public PassivesPanel heroPassives, enemyPassives;
 
     enum Selected { None, Hero, Enemy }
+
     Selected selected = Selected.None;
     BattleContext lastCtx;
     List<Unit> turnOrder = new List<Unit>();
 
     public bool HasSelection => selected != Selected.None;
 
-    static void SetText(TMP_Text t, string s) { if (t != null) t.text = s; }
-    static void SetActive(GameObject g, bool on) { if (g != null && g.activeSelf != on) g.SetActive(on); }
+    static void SetText(TMP_Text t, string s)
+    {
+        if (t != null) t.text = s;
+    }
 
-    void Awake() {
-        if (heroSelectable != null) heroSelectable.Clicked += _ => Select(Selected.Hero);
-        if (enemySelectable != null) enemySelectable.Clicked += _ => Select(Selected.Enemy);
-        if (heroPassives != null) heroPassives.Hide();
-        if (enemyPassives != null) enemyPassives.Hide();
+    static void SetActive(GameObject g, bool on)
+    {
+        if (g != null && g.activeSelf != on)
+            g.SetActive(on);
+    }
+
+    void Awake()
+    {
+        if (heroSelectable != null)
+            heroSelectable.Clicked += _ => Select(Selected.Hero);
+
+        if (enemySelectable != null)
+            enemySelectable.Clicked += _ => Select(Selected.Enemy);
+
+        if (heroPassives != null)
+            heroPassives.Hide();
+
+        if (enemyPassives != null)
+            enemyPassives.Hide();
+
         SetActive(heroProfilePanel, heroProfileAlwaysVisible);
     }
 
-    public void SetTurnOrder(List<Unit> order) {
+    public void SetTurnOrder(List<Unit> order)
+    {
         turnOrder = order ?? new List<Unit>();
-        if (lastCtx != null) RefreshTurnOrder(lastCtx);
+
+        if (lastCtx != null)
+            RefreshTurnOrder(lastCtx);
     }
 
     // Clicking the selected unit again, or pressing Esc, clears the selection.
-    void Select(Selected which) {
+    void Select(Selected which)
+    {
         selected = selected == which ? Selected.None : which;
-        if (lastCtx != null) RefreshSelection(lastCtx);
+
+        if (lastCtx != null)
+            RefreshSelection(lastCtx);
     }
+
     public void ClearSelection() => Select(selected);
 
-    public void Refresh(BattleContext ctx) {
+    public void Refresh(BattleContext ctx)
+    {
         lastCtx = ctx;
+
         var fate = ctx.Fate;
         bool revealed = ctx.Progress.FateBarRevealed;
 
         SetActive(fatePanel, revealed);
-        if (fateMeter != null) fateMeter.SetValue(fate.Fate / 100f);
+
+        if (fateMeter != null)
+            fateMeter.SetValue(fate.Fate / 100f);
+
         SetText(fateValueText, fate.Fate.ToString());
         SetText(tierText, fate.TierName);
-        SetText(maliceText, $"Malice dice: {fate.MaliceDice}  (rolling {ctx.CurrentDice})");
+        SetText(maliceText,
+            $"Malice dice: {fate.MaliceDice}  (rolling {ctx.CurrentDice})" +
+            (ctx.HasFortuneDie ? " + Fortune Die" : ""));
         SetText(goldText, $"Gold: {fate.Gold}");
 
         SetActive(suspicionPanel, revealed);
-        if (suspicionBar != null) suspicionBar.value = fate.Suspicion / 100f;
+
+        if (suspicionBar != null)
+            suspicionBar.value = fate.Suspicion / 100f;
+
         SetText(suspicionTierText, SuspicionInfo.TierOf(fate.Suspicion).ToString());
-        SetText(suspicionDetailText, $"{fate.Suspicion}/100  -  check DC {SuspicionInfo.CheckDc(fate.Suspicion)}");
+        SetText(suspicionDetailText,
+            $"{fate.Suspicion}/100  -  check DC {SuspicionInfo.CheckDc(fate.Suspicion)}");
 
         SetActive(moralePanel, revealed && !fate.SoloMode);
-        if (moraleBar != null) moraleBar.value = fate.Morale / 100f;
+
+        if (moraleBar != null)
+            moraleBar.value = fate.Morale / 100f;
+
         SetText(moraleTierText, MoraleName(fate.Morale));
-        SetText(moraleDetailText, $"{fate.Morale}/100  -  rolls {fate.MoraleModifier:+0;-0;+0}");
+        SetText(moraleDetailText,
+            $"{fate.Morale}/100  -  rolls {fate.MoraleModifier:+0;-0;+0}");
 
-        if (oddsText != null) {
+        if (oddsText != null)
+        {
             oddsText.gameObject.SetActive(!ctx.Scripted);
-            float p = Odds.HitChance(ctx.Enemy.DefenseDc, ctx.RollMod, ctx.CurrentDice) * 100f;
-            oddsText.text = $"Hit chance: {p:0.0}%  (need {ctx.Enemy.DefenseDc - ctx.RollMod}+ on die)";
+
+            float p = Odds.HitChance(
+                ctx.Enemy.DefenseDc,
+                ctx.RollMod,
+                ctx.CurrentDice,
+                ctx.HasFortuneDie) * 100f;
+
+            oddsText.text =
+                $"Hit chance: {p:0.0}%  (need {ctx.Enemy.DefenseDc - ctx.RollMod}+ on die)";
         }
 
-        SetText(heroText, $"{ctx.Hero.DisplayName}  HP {ctx.Hero.Hp}/{ctx.Hero.MaxHp}");
-        if (heroHpBar != null) heroHpBar.value = ctx.Hero.MaxHp > 0 ? (float)ctx.Hero.Hp / ctx.Hero.MaxHp : 0f;
+        SetText(heroText,
+            $"{ctx.Hero.DisplayName}  HP {ctx.Hero.Hp}/{ctx.Hero.MaxHp}");
+
+        if (heroHpBar != null)
+        {
+            heroHpBar.value = ctx.Hero.MaxHp > 0
+                ? (float)ctx.Hero.Hp / ctx.Hero.MaxHp
+                : 0f;
+        }
+
         SetText(audacityText, $"Audacity: {fate.Audacity}");
-        if (audacityPips != null) audacityPips.Set(fate.Audacity);
 
-        SetText(enemyText, ctx.Scripted ? ctx.Enemy.DisplayName
-                                        : $"{ctx.Enemy.DisplayName}  HP {ctx.Enemy.Hp}/{ctx.Enemy.MaxHp}");
-        if (enemyHpBar != null) {
+        if (audacityPips != null)
+            audacityPips.Set(fate.Audacity);
+
+        SetText(enemyText,
+            ctx.Scripted
+                ? ctx.Enemy.DisplayName
+                : $"{ctx.Enemy.DisplayName}  HP {ctx.Enemy.Hp}/{ctx.Enemy.MaxHp}");
+
+        if (enemyHpBar != null)
+        {
             enemyHpBar.gameObject.SetActive(!ctx.Scripted);
-            enemyHpBar.value = ctx.Enemy.MaxHp > 0 ? (float)ctx.Enemy.Hp / ctx.Enemy.MaxHp : 0f;
+
+            enemyHpBar.value = ctx.Enemy.MaxHp > 0
+                ? (float)ctx.Enemy.Hp / ctx.Enemy.MaxHp
+                : 0f;
         }
 
-        if (heroHpTag != null) heroHpTag.Set(ctx.Hero.DisplayName, ctx.Hero.Hp, ctx.Hero.MaxHp, true);
-        if (enemyHpTag != null) enemyHpTag.Set(ctx.Enemy.DisplayName, ctx.Enemy.Hp, ctx.Enemy.MaxHp, !ctx.Scripted);
+        if (heroHpTag != null)
+            heroHpTag.Set(ctx.Hero.DisplayName, ctx.Hero.Hp, ctx.Hero.MaxHp, true);
+
+        if (enemyHpTag != null)
+            enemyHpTag.Set(ctx.Enemy.DisplayName, ctx.Enemy.Hp, ctx.Enemy.MaxHp, !ctx.Scripted);
+
         SetText(heroStatusText, StatusLine(ctx.Hero));
         SetText(enemyStatusText, StatusLine(ctx.Enemy));
 
@@ -143,119 +217,260 @@ public class BattleStatusView : MonoBehaviour {
         RefreshTurnOrder(ctx);
     }
 
-    static string StatusLine(Unit u) {
+    static string StatusLine(Unit u)
+    {
         string s = u.Statuses.Describe();
-        if (u.Shield > 0) s = s.Length > 0 ? $"Shield {u.Shield}  |  {s}" : $"Shield {u.Shield}";
+
+        if (u.Shield > 0)
+            s = s.Length > 0
+                ? $"Shield {u.Shield}  |  {s}"
+                : $"Shield {u.Shield}";
+
         return s;
     }
 
     static string MoraleName(int morale) =>
-        morale >= 61 ? "Confident" : morale >= 50 ? "Steady" : morale >= 30 ? "Wavering" : "Breaking";
+        morale >= 61 ? "Confident" :
+        morale >= 50 ? "Steady" :
+        morale >= 30 ? "Wavering" : "Breaking";
 
     // ---- Clash cards ----
-    void RefreshClashCards(BattleContext ctx) {
-        if (enemyActionText != null) {
-            SetActive(enemyActionPanel, ctx.Enemy.Attacks);
-            enemyActionText.text = EnemyCardText(ctx);
-        }
+
+    void RefreshClashCards(BattleContext ctx)
+    {
+        SetActive(enemyActionPanel, ctx.Enemy.Attacks);
+
+        if (enemyActionNameText != null)
+            enemyActionNameText.text = EnemyCardName(ctx);
+
+        if (enemyActionDescriptionText != null)
+            enemyActionDescriptionText.text = EnemyCardAction(ctx);
 
         bool committed = ctx.ChosenAction != PlayerAction.None;
+
         SetActive(heroActionPanel, committed);
-        if (heroActionText != null && committed) heroActionText.text = HeroCardText(ctx);
+
+        if (heroActionNameText != null)
+            heroActionNameText.text = HeroCardName(ctx);
+
+        if (heroActionDescriptionText != null)
+            heroActionDescriptionText.text = HeroCardAction(ctx);
     }
 
-    string EnemyCardText(BattleContext ctx) {
+    string EnemyCardName(BattleContext ctx)
+    {
+        return ctx.Enemy.CurrentMoveName;
+    }
+
+    string EnemyCardAction(BattleContext ctx)
+    {
         var enemy = ctx.Enemy;
         var move = enemy.CurrentMove;
-        string name = enemy.CurrentMoveName;
-        if (ctx.Scripted) return name;
 
-        if (move != null && move.moveType == EnemyMoveType.Defend) {
-            string g = move.guardAmount > 0 ? $"Guard {move.guardAmount}" : "Guarding";
-            if (move.damageReductionPercent > 0) g += $"  -{move.damageReductionPercent}% damage";
-            return $"{name}\n{g}\nNo attack this round";
+        if (ctx.Scripted)
+            return "";
+
+        if (move != null && move.moveType == EnemyMoveType.Defend)
+        {
+            string g = move.guardAmount > 0
+                ? $"Guard {move.guardAmount}"
+                : "Guarding";
+
+            if (move.damageReductionPercent > 0)
+                g += $"  -{move.damageReductionPercent}% damage";
+
+            return g + "\nNo attack this round";
         }
+
         if (move != null && move.moveType == EnemyMoveType.Skill)
-            return $"{name}\nNo attack this round" + EffectLines(move);
+            return "No attack this round" + EffectLines(move);
 
         var d = enemy.Data;
+
         int die = move != null ? move.damageDie : d.damageDie;
         int bonus = move != null ? move.damageBonus : d.damageBonus;
-        string text = $"{name}\nd{die}{bonus:+0;-0;+0} damage\n{1 + ctx.Fate.MaliceDice} dice, keep highest";
+
+        string text =
+            $"d{die}{bonus:+0;-0;+0} damage\n" +
+            $"{1 + ctx.Fate.MaliceDice} dice, keep highest";
+
         if (showEnemyLandChance)
-            text += $"\n{Odds.EnemyHitChance(ctx.Hero.DefenseDc, enemy.AttackModifier, 1 + ctx.Fate.MaliceDice) * 100f:0.0}% to land if you miss";
+        {
+            text +=
+                $"\n{Odds.EnemyHitChance(ctx.Hero.DefenseDc, enemy.AttackModifier, 1 + ctx.Fate.MaliceDice) * 100f:0.0}% to land if you miss";
+        }
+
         return text + EffectLines(move);
     }
 
-    static string EffectLines(EnemyMoveData move) {
-        if (move == null || move.effects == null || move.effects.Count == 0) return "";
+    static string EffectLines(EnemyMoveData move)
+    {
+        if (move == null || move.effects == null || move.effects.Count == 0)
+            return "";
+
         var sb = new StringBuilder();
-        foreach (var e in move.effects) {
+
+        foreach (var e in move.effects)
+        {
             if (e == null) continue;
+
             sb.Append('\n');
-            switch (e.effectType) {
-                case EnemyMoveEffectType.ApplyStatus: sb.Append($"{StatusTracker.NameOf(e.statusEffect)} {e.amount} ({e.durationTurns}t)"); break;
-                case EnemyMoveEffectType.DealDamage: sb.Append($"+{e.amount} damage"); break;
-                case EnemyMoveEffectType.Heal: sb.Append($"Heal {e.amount}"); break;
-                case EnemyMoveEffectType.GainGuard: sb.Append($"Guard {e.amount}"); break;
-                case EnemyMoveEffectType.RemoveStatus: sb.Append($"Cleanse {StatusTracker.NameOf(e.statusEffect)}"); break;
-                default: sb.Append($"Audacity {e.amount:+0;-0}"); break;
+
+            switch (e.effectType)
+            {
+                case EnemyMoveEffectType.ApplyStatus:
+                    sb.Append($"{StatusTracker.NameOf(e.statusEffect)} {e.amount} ({e.durationTurns}t)");
+                    break;
+
+                case EnemyMoveEffectType.DealDamage:
+                    sb.Append($"+{e.amount} damage");
+                    break;
+
+                case EnemyMoveEffectType.Heal:
+                    sb.Append($"Heal {e.amount}");
+                    break;
+
+                case EnemyMoveEffectType.GainGuard:
+                    sb.Append($"Guard {e.amount}");
+                    break;
+
+                case EnemyMoveEffectType.RemoveStatus:
+                    sb.Append($"Cleanse {StatusTracker.NameOf(e.statusEffect)}");
+                    break;
+
+                default:
+                    sb.Append($"Audacity {e.amount:+0;-0}");
+                    break;
             }
-            if (e.chancePercent < 100) sb.Append($" ({e.chancePercent}%)");
+
+            if (e.chancePercent < 100)
+                sb.Append($" ({e.chancePercent}%)");
         }
+
         return sb.ToString();
     }
 
-    string HeroCardText(BattleContext ctx) {
-        string title = ctx.ChosenCardTitle ?? ctx.ChosenAction.ToString();
-        if (ctx.ChosenAction == PlayerAction.Defend) return $"{title}\nHalve the hit";
-        if (ctx.ActionRollsToHit) {
-            if (ctx.Scripted) return title;
-            string text = $"{title}\n{Odds.HitChance(ctx.Enemy.DefenseDc, ctx.RollMod, ctx.CurrentDice) * 100f:0.0}% to hit";
-            if (ctx.ActiveSkill != null) text += "\n" + ctx.ActiveSkill.Summary();
+    string HeroCardName(BattleContext ctx)
+    {
+        return ctx.ChosenCardTitle ?? ctx.ChosenAction.ToString();
+    }
+
+    string HeroCardAction(BattleContext ctx)
+    {
+        if (ctx.ChosenAction == PlayerAction.Defend)
+            return "Halve the hit";
+
+        if (ctx.ActionRollsToHit)
+        {
+            if (ctx.Scripted)
+                return "";
+
+            string text =
+                $"{Odds.HitChance(ctx.Enemy.DefenseDc, ctx.RollMod, ctx.CurrentDice, ctx.HasFortuneDie) * 100f:0.0}% to hit";
+
+            if (ctx.ActiveSkill != null)
+                text += "\n" + ctx.ActiveSkill.Summary();
+
             return text;
         }
-        return ctx.ActiveSkill != null ? $"{title}\n{ctx.ActiveSkill.Summary()}" : title;
+
+        return ctx.ActiveSkill != null
+            ? ctx.ActiveSkill.Summary()
+            : "";
     }
 
     // ---- Selection / passives ----
-    void RefreshSelection(BattleContext ctx) {
-        SetActive(heroProfilePanel, heroProfileAlwaysVisible || selected == Selected.Hero);
-        if (heroSelectable != null) heroSelectable.SetSelected(selected == Selected.Hero);
-        if (enemySelectable != null) enemySelectable.SetSelected(selected == Selected.Enemy);
 
-        if (selected == Selected.Hero && heroPassives != null) {
+    void RefreshSelection(BattleContext ctx)
+    {
+        SetActive(
+            heroProfilePanel,
+            heroProfileAlwaysVisible || selected == Selected.Hero);
+
+        if (heroSelectable != null)
+            heroSelectable.SetSelected(selected == Selected.Hero);
+
+        if (enemySelectable != null)
+            enemySelectable.SetSelected(selected == Selected.Enemy);
+
+        if (selected == Selected.Hero && heroPassives != null)
+        {
             var lines = new List<string>(ctx.Hero.Class.passives);
+
             if (ctx.Progress.FateBarRevealed && ctx.Fate.MaliceDice > 0)
-                lines.Insert(0, $"Jinxed: Destiny adds {ctx.Fate.MaliceDice} Malice dice (keep lowest)");
+                lines.Insert(0,
+                    $"Jinxed: Destiny adds {ctx.Fate.MaliceDice} Malice dice (keep lowest)");
+
             heroPassives.Show(ctx.Hero.DisplayName, lines);
-        } else if (heroPassives != null) heroPassives.Hide();
+        }
+        else if (heroPassives != null)
+        {
+            heroPassives.Hide();
+        }
 
         if (selected == Selected.Enemy && enemyPassives != null)
             enemyPassives.Show(ctx.Enemy.DisplayName, ctx.Enemy.Data.passives);
-        else if (enemyPassives != null) enemyPassives.Hide();
+        else if (enemyPassives != null)
+            enemyPassives.Hide();
     }
 
     // ---- Turn order ----
-    void RefreshTurnOrder(BattleContext ctx) {
+
+    void RefreshTurnOrder(BattleContext ctx)
+    {
         if (turnOrderText == null) return;
-        if (turnOrder.Count == 0) { turnOrderText.text = ""; return; }
+
+        if (turnOrder.Count == 0)
+        {
+            turnOrderText.text = "";
+            return;
+        }
 
         Unit active = null;
-        switch (ctx.State) {
-            case BattleState.HeroTurn: case BattleState.Roll: case BattleState.Resolve: active = ctx.Hero; break;
-            case BattleState.EnemyTurn: active = ctx.Enemy; break;
+
+        switch (ctx.State)
+        {
+            case BattleState.HeroTurn:
+            case BattleState.Roll:
+            case BattleState.Resolve:
+                active = ctx.Hero;
+                break;
+
+            case BattleState.EnemyTurn:
+                active = ctx.Enemy;
+                break;
         }
 
         var sb = new StringBuilder();
-        if (ctx.Round > 0) sb.Append("Round ").Append(ctx.Round).Append("   ");
-        for (int i = 0; i < turnOrder.Count; i++) {
-            if (i > 0) sb.Append(turnOrderSeparator);
+
+        if (ctx.Round > 0)
+            sb.Append("Round ").Append(ctx.Round).Append("   ");
+
+        for (int i = 0; i < turnOrder.Count; i++)
+        {
+            if (i > 0)
+                sb.Append(turnOrderSeparator);
+
             var u = turnOrder[i];
-            string name = u.IsDead ? $"<s>{u.DisplayName}</s>" : u.DisplayName;
-            if (u == active) sb.Append("<b><color=#").Append(activeColorHex).Append('>').Append(name).Append("</color></b>");
-            else sb.Append(name);
+
+            string name = u.IsDead
+                ? $"<s>{u.DisplayName}</s>"
+                : u.DisplayName;
+
+            if (u == active)
+            {
+                sb.Append("<b><color=#")
+                    .Append(activeColorHex)
+                    .Append('>')
+                    .Append(name)
+                    .Append("</color></b>");
+            }
+            else
+            {
+                sb.Append(name);
+            }
         }
+
         turnOrderText.text = sb.ToString();
     }
 }

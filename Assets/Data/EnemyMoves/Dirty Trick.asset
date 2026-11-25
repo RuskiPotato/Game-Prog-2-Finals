@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Dirty Trick
   m_EditorClassIdentifier: 
   moveName: Dirty Trick
-  description: 
+  description: A dirty trick that lowers the player's Defense.
   moveType: 0
-  selectionWeight: 1
+  selectionWeight: 2
   damageDie: 2
   damageBonus: 1
   attackModifier: 0
@@ -28,4 +28,4 @@ MonoBehaviour:
     statusEffect: 4
     amount: 1
     durationTurns: 1
-    chancePercent: 0
+    chancePercent: 70

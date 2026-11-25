@@ -65,6 +65,8 @@ public class EncounterOutcome {
             ctx.Progress.Phase = GamePhase.Normal;            // reveal, new cheats
             foreach (var id in GameManager.FirstUnlocks) ctx.Progress.Unlock(id);
             fate.SetPhase(GamePhase.Normal);
+            fate.Fate = Mathf.Clamp(gm.Config.run.startingFate, 0, 100);
+            fate.Notify();
             ctx.Hero.FullHeal();
             ctx.RaiseChanged();
             yield return WaitContinue(ctx, "The Fate bar appears. Destiny is rigging every roll. Time to cheat back. "); 

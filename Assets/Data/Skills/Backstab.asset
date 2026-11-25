@@ -12,7 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cc018009c1451a418d427916d0f4b9f, type: 3}
   m_Name: Backstab
   m_EditorClassIdentifier: 
+  art: {fileID: 0}
   id: backstab
   displayName: Backstab
-  description: You stab the enemy, in the back.
+  description: 'You stab the enemy, in the back.
+
+
+    Apply Weakness on hit, enemies
+    deal less damage
+
+'
   cooldown: 2
+  kind: 0
+  hits: 1
+  damageMultiplier: 1
+  flatDamage: 0
+  attackRollModifier: 0
+  effects:
+  - effectType: 2
+    target: 1
+    statusEffect: 6
+    amount: 2
+    durationTurns: 3
+    chancePercent: 100

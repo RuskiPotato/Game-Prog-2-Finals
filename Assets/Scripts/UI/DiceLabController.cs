@@ -87,11 +87,13 @@ public class DiceLabController : MonoBehaviour, ICheatHost {
         suspicionBar.value = s.Suspicion / 100f;
         moraleBar.value = s.Morale / 100f;
         tierText.text = s.TierName;
-        maliceText.text = $"Malice dice: {s.MaliceDice}  (rolling {CurrentDice})";
+        bool fortuneDie = s.MaliceDice > 0 && progress.Phase != GamePhase.FirstEncounter;
+        maliceText.text = $"Malice dice: {s.MaliceDice}  (rolling {CurrentDice})" +
+            (fortuneDie ? " + Fortune Die" : "");
 
         // Odds stay hidden during the scripted first encounter ("rigged but legible" starts at the reveal)
         oddsText.gameObject.SetActive(progress.Phase != GamePhase.FirstEncounter);
-        float p = Odds.HitChance(CurrentDc, RollMod, CurrentDice) * 100f;
+        float p = Odds.HitChance(CurrentDc, RollMod, CurrentDice, fortuneDie) * 100f;
         oddsText.text = $"Hit chance: {p:0.0}%  (need {CurrentDc - RollMod}+ on die)";
 
         audacityText.text = $"Audacity: {s.Audacity}";
@@ -116,8 +118,12 @@ public class DiceLabController : MonoBehaviour, ICheatHost {
         Refresh();
     }
 
-    RollResult OneRoll(int n, int needed, bool scripted) =>
-        scripted ? DiceService.RollForcedMiss(n, needed) : DiceService.RollMalice(n);
+    RollResult OneRoll(int n, int needed, bool scripted) {
+        if (scripted) return DiceService.RollForcedMiss(n, needed);
+        return s.MaliceDice > 0
+            ? DiceService.RollMaliceWithFortune(n)
+            : DiceService.RollMalice(n);
+    }
 
     IEnumerator DoRoll() {
         if (rolling) yield break;
@@ -130,13 +136,14 @@ public class DiceLabController : MonoBehaviour, ICheatHost {
         var result = OneRoll(n, needed, scripted);
         if (sleightArmed) {                      // reroll, keep the better result
             var second = OneRoll(n, needed, scripted);
-            if (second.Lowest > result.Lowest) result = second;
+            if (second.KeptValue > result.KeptValue) result = second;
         }
 
-        yield return diceTray.Tumble(n);
+        int fortuneIndex = result.FortuneIndex;
+        yield return diceTray.Tumble(result.Dice.Length, fortuneIndex: fortuneIndex);
         diceTray.ShowRoll(result);
 
-        int total = result.Lowest + RollMod;
+        int total = result.KeptValue + RollMod;
         bool success = total >= CurrentDc;
         s.ApplyRollOutcome(success, total - CurrentDc, result.Fumble);
         Log(result.Fumble ? $"FUMBLE! ({total} vs DC {CurrentDc})"
@@ -163,6 +170,14 @@ public class DiceLabController : MonoBehaviour, ICheatHost {
         Log("Party wipe. Destiny: \"Is that really the best you can do?\"");
         progress.Phase = GamePhase.Normal;
         foreach (var id in GameManager.FirstUnlocks) progress.Unlock(id);
+
+        var config = GameManager.Instance != null
+            ? GameManager.Instance.Config
+            : null;
+        if (config != null && config.run != null)
+            s.Fate = Mathf.Clamp(config.run.startingFate, 0, 100);
+        s.Notify();
+
         ApplyPhase();
     }
 }
