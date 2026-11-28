@@ -15,7 +15,7 @@ MonoBehaviour:
   id: Skeleton
   displayName: Skeleton
   hp: 20
-  defenseDc: 11
+  defenseDc: 9
   agi: 3
   attackMod: 1
   damageDie: 6

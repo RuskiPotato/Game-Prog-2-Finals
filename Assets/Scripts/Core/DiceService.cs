@@ -3,14 +3,9 @@ using System;
 public readonly struct RollResult
 {
     public readonly int[] Dice;
-    // Lowest Malice die, retained for compatibility with existing tools/tests.
     public readonly int Lowest;
     public readonly bool Fumble;
     public readonly int LowestIndex;
-    // The die actually used for the final total. This may be the Fortune Die.
-    public readonly int KeptIndex;
-    public readonly int KeptValue;
-    public readonly int FortuneIndex;
 
     public RollResult(int[] dice, int lowest, bool fumble, int lowestIndex = 0)
     {
@@ -18,27 +13,6 @@ public readonly struct RollResult
         Lowest = lowest;
         Fumble = fumble;
         LowestIndex = lowestIndex;
-        KeptIndex = lowestIndex;
-        KeptValue = lowest;
-        FortuneIndex = -1;
-    }
-
-    public RollResult(
-        int[] dice,
-        int lowest,
-        bool fumble,
-        int lowestIndex,
-        int keptIndex,
-        int keptValue,
-        int fortuneIndex)
-    {
-        Dice = dice;
-        Lowest = lowest;
-        Fumble = fumble;
-        LowestIndex = lowestIndex;
-        KeptIndex = keptIndex;
-        KeptValue = keptValue;
-        FortuneIndex = fortuneIndex;
     }
 }
 
@@ -133,38 +107,62 @@ public static class DiceService
         return new RollResult(dice, lowest, fumble, lowestIndex);
     }
 
-    // The hero keeps the lowest Malice die, then may use one separate Fortune Die
-    // if it rolled higher. The Fortune Die is deliberately not another Malice die.
-    public static RollResult RollMaliceWithFortune(int n, int sides = 20)
+    // Focused Roll: roll the normal Malice pool (keep its lowest), then
+    // roll the bonus d20(s) and keep the higher of the two results.
+    // The returned Dice array contains both pools for the clash display.
+    // Fumble is based on the final kept die, so a higher Focused die can
+    // rescue a natural 1 from the Malice pool.
+    public static RollResult RollMaliceWithBonusDice(
+        int maliceDiceCount,
+        int bonusDiceCount,
+        int sides = 20)
     {
-        n = Math.Max(1, n);
+        maliceDiceCount = Math.Max(1, maliceDiceCount);
+        bonusDiceCount = Math.Max(0, bonusDiceCount);
         sides = Math.Max(1, sides);
 
-        RollResult malice = RollMalice(n, sides);
-        int fortune = R.Next(1, sides + 1);
-        int[] dice = new int[n + 1];
-        Array.Copy(malice.Dice, dice, n);
-        int fortuneIndex = n;
-        dice[fortuneIndex] = fortune;
+        var dice = new int[maliceDiceCount + bonusDiceCount];
 
-        bool fortuneKept = fortune >= malice.Lowest;
-        int keptIndex = fortuneKept ? fortuneIndex : malice.LowestIndex;
-        int keptValue = Math.Max(malice.Lowest, fortune);
-        bool fumble = malice.Fumble || fortune == 1;
+        int maliceLowest = int.MaxValue;
+        int maliceLowestIndex = 0;
+
+        for (int i = 0; i < maliceDiceCount; i++)
+        {
+            int value = R.Next(1, sides + 1);
+            dice[i] = value;
+
+            if (value < maliceLowest)
+            {
+                maliceLowest = value;
+                maliceLowestIndex = i;
+            }
+        }
+
+        int keptValue = maliceLowest;
+        int keptIndex = maliceLowestIndex;
+
+        for (int i = 0; i < bonusDiceCount; i++)
+        {
+            int index = maliceDiceCount + i;
+            int value = R.Next(1, sides + 1);
+            dice[index] = value;
+
+            if (value > keptValue)
+            {
+                keptValue = value;
+                keptIndex = index;
+            }
+        }
 
         return new RollResult(
             dice,
-            malice.Lowest,
-            fumble,
-            malice.LowestIndex,
-            keptIndex,
             keptValue,
-            fortuneIndex
+            keptValue == 1,
+            keptIndex
         );
     }
 
-    // Scripted loss: one Malice die is guaranteed to remain below minNeeded.
-    // Scripted encounters intentionally do not receive the Fortune Die.
+    // Scripted loss: one die is guaranteed to roll below minNeeded.
     public static RollResult RollForcedMiss(
         int n,
         int minNeeded,

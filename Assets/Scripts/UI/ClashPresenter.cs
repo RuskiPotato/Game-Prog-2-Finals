@@ -58,12 +58,12 @@ public class ClashPresenter : MonoBehaviour
             enemyDiceTray.Clear();
     }
 
-    public IEnumerator Tumble(int diceCount, int fortuneIndex = -1)
+    public IEnumerator Tumble(int diceCount)
     {
         if (diceTray == null)
             yield break;
 
-        yield return diceTray.Tumble(diceCount, fortuneIndex: fortuneIndex);
+        yield return diceTray.Tumble(diceCount);
     }
 
     public void ShowRoll(RollResult roll)
@@ -86,13 +86,10 @@ public class ClashPresenter : MonoBehaviour
             enemyDiceTray.ShowValues(dice, keptIndex);
     }
 
-    public IEnumerator TumbleClash(
-        int heroDiceCount,
-        int enemyDiceCount,
-        int heroFortuneIndex = -1)
+    public IEnumerator TumbleClash(int heroDiceCount, int enemyDiceCount)
     {
         Coroutine hero = diceTray != null
-            ? StartCoroutine(diceTray.Tumble(heroDiceCount, 0.72f, 0.045f, heroFortuneIndex))
+            ? StartCoroutine(diceTray.Tumble(heroDiceCount, 0.72f, 0.045f))
             : null;
 
         Coroutine enemy = enemyDiceTray != null

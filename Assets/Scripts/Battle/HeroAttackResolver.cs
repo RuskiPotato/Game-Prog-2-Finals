@@ -26,8 +26,10 @@ public class HeroAttackResolver
         if (ctx.Scripted)
             return DiceService.RollForcedMiss(diceCount, minNeeded);
 
-        return ctx.HasFortuneDie
-            ? DiceService.RollMaliceWithFortune(diceCount)
+        return ctx.CardBonusDice > 0
+            ? DiceService.RollMaliceWithBonusDice(
+                diceCount,
+                ctx.CardBonusDice)
             : DiceService.RollMalice(diceCount);
     }
 
@@ -49,6 +51,8 @@ public class HeroAttackResolver
         int mod = ctx.RollMod;
         int dc = enemy.DefenseDc;
         int heroDiceCount = ctx.CurrentDice;
+        int displayedHeroDiceCount = heroDiceCount +
+            (!ctx.Scripted ? ctx.CardBonusDice : 0);
 
         bool boosted =
             ctx.RemovedMaliceDice > 0 ||
@@ -64,8 +68,6 @@ public class HeroAttackResolver
 
         int enemyDiceCount = 0;
         int enemyTotal = 0;
-        int fortuneIndex = ctx.HasFortuneDie ? heroDiceCount : -1;
-        int shownHeroDiceCount = heroDiceCount + (ctx.HasFortuneDie ? 1 : 0);
 
         if (opposed)
         {
@@ -114,7 +116,7 @@ public class HeroAttackResolver
                 scriptedCap
             );
 
-            if (secondRoll.KeptValue > roll.KeptValue)
+            if (secondRoll.Lowest > roll.Lowest)
                 roll = secondRoll;
         }
 
@@ -124,9 +126,8 @@ public class HeroAttackResolver
         if (opposed)
         {
             yield return ctx.View.TumbleClash(
-                shownHeroDiceCount,
-                enemyDiceCount,
-                fortuneIndex
+                displayedHeroDiceCount,
+                enemyDiceCount
             );
 
             ctx.View.ShowRoll(roll);
@@ -138,13 +139,13 @@ public class HeroAttackResolver
         }
         else
         {
-            yield return ctx.View.Tumble(shownHeroDiceCount, fortuneIndex);
+            yield return ctx.View.Tumble(displayedHeroDiceCount);
             ctx.View.ShowRoll(roll);
         }
 
         ctx.State = BattleState.Resolve;
 
-        int total = roll.KeptValue + mod;
+        int total = roll.Lowest + mod;
 
         ctx.HeroClashTotal = total;
 
@@ -204,21 +205,16 @@ public class HeroAttackResolver
             {
                 boosted = true;
 
-                // Loaded Dice removes Malice dice before its reroll.
-                heroDiceCount = ctx.CurrentDice;
-                fortuneIndex = ctx.HasFortuneDie ? heroDiceCount : -1;
-                shownHeroDiceCount = heroDiceCount + (ctx.HasFortuneDie ? 1 : 0);
-
                 roll = Roll(
                     ctx,
                     heroDiceCount,
                     scriptedCap
                 );
 
-                yield return ctx.View.Tumble(shownHeroDiceCount, fortuneIndex);
+                yield return ctx.View.Tumble(displayedHeroDiceCount);
                 ctx.View.ShowRoll(roll);
 
-                total = roll.KeptValue + mod;
+                total = roll.Lowest + mod;
 
                 ctx.HeroClashTotal = total;
 

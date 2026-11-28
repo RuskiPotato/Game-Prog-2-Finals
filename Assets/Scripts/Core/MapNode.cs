@@ -1,11 +1,17 @@
+using System;
+using System.Collections.Generic;
+
 public enum NodeType { Fight, Elite, Shop, SnackBreak, RulesDispute, Boss }
 
-[System.Serializable]
+[Serializable]
 public class MapNode {
-    public int act;          // 0-based
-    public int index;        // 0-based within the act
+    public string id;
+    public int act;          // zero-based act
+    public int index;        // zero-based row within act
+    public int lane;         // 0 left, 1 center, 2 right
     public NodeType type;
     public bool visited;
-
+    public bool unlocked;
+    public List<string> nextNodeIds = new List<string>();
     public bool IsCombat => type == NodeType.Fight || type == NodeType.Elite || type == NodeType.Boss;
 }

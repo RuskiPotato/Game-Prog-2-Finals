@@ -595,6 +595,10 @@ MonoBehaviour:
   label: {fileID: 0}
   normal: {r: 1, g: 1, b: 1, a: 1}
   lowest: {r: 0.7, g: 0.3, b: 1, a: 1}
+  normalSprite: {fileID: 0}
+  maliceSprite: {fileID: 0}
+  maliceNormal: {r: 1, g: 1, b: 1, a: 1}
+  maliceLowest: {r: 0.7, g: 0.3, b: 1, a: 1}
 --- !u!1 &85297909
 GameObject:
   m_ObjectHideFlags: 0
@@ -1673,6 +1677,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   diePrefab: {fileID: 0}
   maxDice: 5
+  extrasAreMalice: 1
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

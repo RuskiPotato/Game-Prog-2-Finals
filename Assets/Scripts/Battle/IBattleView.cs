@@ -4,11 +4,11 @@ using System.Collections;
 public interface IBattleView {
     void Log(string message);
     void SetGm(string line);
-    IEnumerator Tumble(int diceCount, int fortuneIndex = -1);
+    IEnumerator Tumble(int diceCount);
     void ShowRoll(RollResult roll);
     IEnumerator TumbleEnemy(int diceCount);                  // clash: the enemy's dice are visual only
     void ShowEnemyRoll(int[] dice, int keptIndex);
-    IEnumerator TumbleClash(int heroDiceCount, int enemyDiceCount, int heroFortuneIndex = -1);
+    IEnumerator TumbleClash(int heroDiceCount, int enemyDiceCount);
     IEnumerator ClashApproach();
     IEnumerator ClashOutcome(bool heroWon, bool enemyWon);
     IEnumerator ClashOutcome(bool heroWon, bool enemyWon, bool tied);

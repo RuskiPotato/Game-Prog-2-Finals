@@ -49,7 +49,7 @@ public class CombatCardData : CardData {
     public void Apply(BattleContext ctx) {
         switch (effect) {
             case CombatCardEffect.RollModifier: ctx.AddCardRollModifier(effectValue); break;
-            case CombatCardEffect.ExtraPlayerDie: ctx.AddCardExtraDice(effectValue); break;
+            case CombatCardEffect.ExtraPlayerDie: ctx.AddCardBonusDice(effectValue); break;
             case CombatCardEffect.DamageBonus: ctx.AddCardDamageBonus(effectValue); break;
             case CombatCardEffect.DefendDamageReduction: ctx.AddCardDefendReduction(effectValue); break;
             case CombatCardEffect.AudacityBonus: ctx.AddCardAudacity(effectValue); break;

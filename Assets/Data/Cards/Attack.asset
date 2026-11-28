@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de8811b62d3b4b07bd5fbe3ed52cad69, type: 3}
   m_Name: Attack
   m_EditorClassIdentifier: 
-  art: {fileID: 0}
+  art: {fileID: -2386801500476652372, guid: 30fd7f138bd2b14418790b49a5c17d52, type: 3}
   id: AttackCard
   displayName: Attack
   description: Strike the Enemy

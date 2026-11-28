@@ -1,13 +1,10 @@
-
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Everything that reads battle state and shows numbers: Fate diamond + gold, Suspicion/Morale bars, hero/enemy profiles,
-// HP tags, status lines, passives on selection, the turn-order row, the odds line and both clash cards.
-// BattleHud calls Refresh(ctx); this class never touches input or animation.
+
 public class BattleStatusView : MonoBehaviour
 {
     [Header("Fate")]
@@ -59,13 +56,18 @@ public class BattleStatusView : MonoBehaviour
     public GameObject heroActionPanel;
     public TMP_Text heroActionNameText;
     public TMP_Text heroActionDescriptionText;
+    public Image heroActionArt;
 
     public GameObject enemyActionPanel;
     public TMP_Text enemyActionNameText;
     public TMP_Text enemyActionDescriptionText;
+    public Image enemyActionArt;
 
     [Header("Passives")]
     public UnitSelectable heroSelectable, enemySelectable;
+
+    [Header("Sprites (optional, auto-created next to the Selectables)")]
+    public UnitSpriteView heroSprite, enemySprite;
     public PassivesPanel heroPassives, enemyPassives;
 
     enum Selected { None, Hero, Enemy }
@@ -89,6 +91,12 @@ public class BattleStatusView : MonoBehaviour
 
     void Awake()
     {
+        if (heroSprite == null)
+            heroSprite = FindSpriteView(heroSelectable);
+
+        if (enemySprite == null)
+            enemySprite = FindSpriteView(enemySelectable);
+
         if (heroSelectable != null)
             heroSelectable.Clicked += _ => Select(Selected.Hero);
 
@@ -123,9 +131,38 @@ public class BattleStatusView : MonoBehaviour
 
     public void ClearSelection() => Select(selected);
 
+    // Finds the UnitSpriteView on a unit's Selectable object, adding one if the object has an Image or SpriteRenderer.
+    static UnitSpriteView FindSpriteView(UnitSelectable selectable)
+    {
+        if (selectable == null)
+            return null;
+
+        var view = selectable.GetComponent<UnitSpriteView>();
+
+        if (view == null &&
+            (selectable.GetComponent<Image>() != null ||
+             selectable.GetComponent<SpriteRenderer>() != null))
+        {
+            view = selectable.gameObject.AddComponent<UnitSpriteView>();
+        }
+
+        return view;
+    }
+
+    // Hero sprite comes from the hero's class; enemy sprite from the enemy asset.
+    void ApplySprites(BattleContext ctx)
+    {
+        if (heroSprite != null && ctx.Hero != null && ctx.Hero.Class != null)
+            heroSprite.Set(ctx.Hero.Class.portrait);
+
+        if (enemySprite != null && ctx.Enemy != null && ctx.Enemy.Data != null)
+            enemySprite.Set(null);
+    }
+
     public void Refresh(BattleContext ctx)
     {
         lastCtx = ctx;
+        ApplySprites(ctx);
 
         var fate = ctx.Fate;
         bool revealed = ctx.Progress.FateBarRevealed;
@@ -139,7 +176,8 @@ public class BattleStatusView : MonoBehaviour
         SetText(tierText, fate.TierName);
         SetText(maliceText,
             $"Malice dice: {fate.MaliceDice}  (rolling {ctx.CurrentDice})" +
-            (ctx.HasFortuneDie ? " + Fortune Die" : ""));
+            (ctx.HasFortuneDie ? " + Fortune Die" : "") +
+            (ctx.CardBonusDice > 0 ? $" + Focused d20 x{ctx.CardBonusDice}" : ""));
         SetText(goldText, $"Gold: {fate.Gold}");
 
         SetActive(suspicionPanel, revealed);
@@ -167,8 +205,7 @@ public class BattleStatusView : MonoBehaviour
             float p = Odds.HitChance(
                 ctx.Enemy.DefenseDc,
                 ctx.RollMod,
-                ctx.CurrentDice,
-                ctx.HasFortuneDie) * 100f;
+                ctx.CurrentDice) * 100f;
 
             oddsText.text =
                 $"Hit chance: {p:0.0}%  (need {ctx.Enemy.DefenseDc - ctx.RollMod}+ on die)";
@@ -246,6 +283,8 @@ public class BattleStatusView : MonoBehaviour
         if (enemyActionDescriptionText != null)
             enemyActionDescriptionText.text = EnemyCardAction(ctx);
 
+        SetCardArt(enemyActionArt, ctx.Enemy.CurrentMove != null ? ctx.Enemy.CurrentMove.art : null);
+
         bool committed = ctx.ChosenAction != PlayerAction.None;
 
         SetActive(heroActionPanel, committed);
@@ -255,6 +294,19 @@ public class BattleStatusView : MonoBehaviour
 
         if (heroActionDescriptionText != null)
             heroActionDescriptionText.text = HeroCardAction(ctx);
+
+        SetCardArt(heroActionArt, committed ? ctx.ChosenCardArt : null);
+    }
+
+    // Shows the card art in its Image, or hides the Image when there is none.
+    static void SetCardArt(Image target, Sprite art)
+    {
+        if (target == null)
+            return;
+
+        target.sprite = art;
+        target.preserveAspect = true;
+        SetActive(target.gameObject, art != null);
     }
 
     string EnemyCardName(BattleContext ctx)
@@ -366,7 +418,7 @@ public class BattleStatusView : MonoBehaviour
                 return "";
 
             string text =
-                $"{Odds.HitChance(ctx.Enemy.DefenseDc, ctx.RollMod, ctx.CurrentDice, ctx.HasFortuneDie) * 100f:0.0}% to hit";
+                $"{Odds.HitChance(ctx.Enemy.DefenseDc, ctx.RollMod, ctx.CurrentDice) * 100f:0.0}% to hit";
 
             if (ctx.ActiveSkill != null)
                 text += "\n" + ctx.ActiveSkill.Summary();

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de8811b62d3b4b07bd5fbe3ed52cad69, type: 3}
   m_Name: Brace
   m_EditorClassIdentifier: 
-  art: {fileID: 0}
+  art: {fileID: 2594471333139205215, guid: b537fbf2ae7f6ce4482ff2eb11f88a2e, type: 3}
   id: brace
   displayName: Brace
   description: Defend and reduce the halved incoming damage by 2 more.

@@ -19,8 +19,7 @@ public class AttackCardData : CardData
             float chance = Odds.HitChance(
                 ctx.Enemy.DefenseDc,
                 ctx.RollMod,
-                ctx.CurrentDice,
-                ctx.HasFortuneDie
+                ctx.CurrentDice
             ) * 100f;
 
             return $"{chance:0.0}% to hit";
@@ -30,8 +29,7 @@ public class AttackCardData : CardData
             ctx.RollMod,
             ctx.CurrentDice,
             ctx.Enemy.AttackModifier,
-            1 + ctx.Fate.MaliceDice,
-            ctx.HasFortuneDie
+            1 + ctx.Fate.MaliceDice
         ) * 100f;
 
         return $"{winChance:0.0}% clash win";
@@ -46,13 +44,11 @@ public class AttackCardData : CardData
         {
             return
                 $"d20 {ctx.RollMod:+0;-0} vs DC {ctx.Enemy.DefenseDc}\n" +
-                $"{ctx.CurrentDice} hero dice, keep lowest" +
-                (ctx.HasFortuneDie ? " + Fortune Die" : "");
+                $"{ctx.CurrentDice} dice, keep lowest";
         }
 
         return
             $"Opposed: d20 {ctx.RollMod:+0;-0} vs Enemy d20 {ctx.Enemy.AttackModifier:+0;-0}\n" +
-            $"{ctx.CurrentDice} hero dice + {(ctx.HasFortuneDie ? "Fortune Die" : "no Fortune Die")}\n" +
             $"Tier DC {ctx.Enemy.DefenseDc} (<DC: ½ dmg, +10: Crushing)";
     }
 

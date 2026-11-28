@@ -15,7 +15,7 @@ MonoBehaviour:
   id: Slime
   displayName: Slime
   hp: 10
-  defenseDc: 7
+  defenseDc: 1
   agi: 3
   attackMod: 1
   damageDie: 4

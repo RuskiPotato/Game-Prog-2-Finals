@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Line Breaker
   m_EditorClassIdentifier: 
   moveName: Line Breaker
-  description: Disorient the player, reducing Accuracy.
+  description: Stun Player
   moveType: 0
   selectionWeight: 1
   damageDie: 2
@@ -23,9 +23,9 @@ MonoBehaviour:
   damageReductionPercent: 0
   defenseDurationTurns: 1
   effects:
-  - effectType: 1
+  - effectType: 0
     target: 0
     statusEffect: 5
     amount: 2
     durationTurns: 1
-    chancePercent: 60
+    chancePercent: 0

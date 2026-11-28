@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de8811b62d3b4b07bd5fbe3ed52cad69, type: 3}
   m_Name: HeavyBlow
   m_EditorClassIdentifier: 
-  art: {fileID: 0}
+  art: {fileID: 3194798042633142245, guid: 70c317759224ea64a9eba1934f82e80d, type: 3}
   id: heavy_blow
   displayName: Heavy Blow
   description: A forceful attack. Deal +2 damage on a hit.

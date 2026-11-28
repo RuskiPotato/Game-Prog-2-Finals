@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -77,6 +76,9 @@ public class EnemyMoveData : ScriptableObject
 {
     [Header("Presentation")]
     public string moveName = "New Move";
+
+    [Tooltip("Card art shown on the enemy's clash card. Empty = no art.")]
+    public Sprite art;
 
     [TextArea]
     public string description;

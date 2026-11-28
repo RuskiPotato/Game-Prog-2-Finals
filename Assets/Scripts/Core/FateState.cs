@@ -20,13 +20,13 @@ public class FateState
     public event Action Changed;
 
     // Fate event tunables
-    public int SuccessDelta = 3;
-    public int LargeSuccessDelta = 6;
-    public int FumbleDelta = -6;
-    public int FailDelta = -3;
-    public int EnemyDefeatedDelta = 4;
-    public int HeroKODelta = -10;
-    public int DefiantCritDelta = -15;
+    public int SuccessDelta = 6;
+    public int LargeSuccessDelta = 12;
+    public int FumbleDelta = -10;
+    public int FailDelta = -4;
+    public int EnemyDefeatedDelta = 7;
+    public int HeroKODelta = -15;
+    public int DefiantCritDelta = -25;
 
     // Suspicion decay tunables
     public int NoCheatFightDecay = 10;

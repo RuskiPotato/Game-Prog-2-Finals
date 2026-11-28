@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveName: Skittering  Slash
   description: 
-  selectionWeight: 3
+  selectionWeight: 1
   damageDie: 4
   damageBonus: 1
   attackModifier: 0

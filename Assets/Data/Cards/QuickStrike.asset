@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de8811b62d3b4b07bd5fbe3ed52cad69, type: 3}
   m_Name: QuickStrike
   m_EditorClassIdentifier: 
-  art: {fileID: 0}
+  art: {fileID: 2390854778332950865, guid: 6e3300822d4591642835d513318024b9, type: 3}
   id: quick_strike
   displayName: Quick Strike
   description: A measured attack. Gain +1 to the d20 check.

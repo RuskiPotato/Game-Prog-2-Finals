@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Grab
   m_EditorClassIdentifier: 
   moveName: Grab
-  description: Grab the player and weaken their Strength.
+  description: 'Player gets grabbed
+
+
+    Strength Down'
   moveType: 0
-  selectionWeight: 2
+  selectionWeight: 1
   damageDie: 6
   damageBonus: 1
   attackModifier: 0
@@ -23,9 +26,9 @@ MonoBehaviour:
   damageReductionPercent: 0
   defenseDurationTurns: 1
   effects:
-  - effectType: 1
+  - effectType: 0
     target: 0
     statusEffect: 0
     amount: 2
-    durationTurns: 1
-    chancePercent: 100
+    durationTurns: 0
+    chancePercent: 0

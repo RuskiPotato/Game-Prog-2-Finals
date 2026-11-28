@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de8811b62d3b4b07bd5fbe3ed52cad69, type: 3}
   m_Name: Defend
   m_EditorClassIdentifier: 
-  art: {fileID: 0}
+  art: {fileID: -3741382222090806415, guid: 26596394da1684c4aadd890fec6089e2, type: 3}
   id: DefendCard
   displayName: Defend
   description: Block Outcoming Damage

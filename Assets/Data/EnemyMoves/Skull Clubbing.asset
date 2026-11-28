@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveName: Skull Clubbing
   description: 
-  selectionWeight: 3
+  selectionWeight: 1
   damageDie: 6
   damageBonus: 1
   attackModifier: 0

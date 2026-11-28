@@ -258,12 +258,12 @@ public partial class BattleHud : MonoBehaviour, IBattleView
     // Dice presentation
     // --------------------------------------------------
 
-    public IEnumerator Tumble(int diceCount, int fortuneIndex = -1)
+    public IEnumerator Tumble(int diceCount)
     {
         if (clashPresenter == null)
             yield break;
 
-        yield return clashPresenter.Tumble(diceCount, fortuneIndex);
+        yield return clashPresenter.Tumble(diceCount);
     }
 
     public void ShowRoll(RollResult roll)
@@ -288,16 +288,14 @@ public partial class BattleHud : MonoBehaviour, IBattleView
 
     public IEnumerator TumbleClash(
         int heroDiceCount,
-        int enemyDiceCount,
-        int heroFortuneIndex = -1)
+        int enemyDiceCount)
     {
         if (clashPresenter == null)
             yield break;
 
         yield return clashPresenter.TumbleClash(
             heroDiceCount,
-            enemyDiceCount,
-            heroFortuneIndex
+            enemyDiceCount
         );
     }
 

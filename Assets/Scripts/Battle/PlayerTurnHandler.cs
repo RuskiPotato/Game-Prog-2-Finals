@@ -12,6 +12,18 @@ public class PlayerTurnHandler : ITurnHandler {
         this.deck = deck;
     }
 
+    // Art of the permanent Attack / Defend card (the ones listed in GameConfig.hand).
+    static Sprite CoreCardArt(BattleContext ctx, PlayerAction action) {
+        var hand = ctx.Game != null && ctx.Game.Config != null ? ctx.Game.Config.hand : null;
+        if (hand == null) return null;
+        foreach (var card in hand) {
+            if (card == null) continue;
+            if (action == PlayerAction.Attack && card is AttackCardData) return card.Art;
+            if (action == PlayerAction.Defend && card is DefendCardData) return card.Art;
+        }
+        return null;
+    }
+
     public IEnumerator Run(BattleContext ctx) {
         ctx.State = BattleState.HeroTurn;
         ctx.ResetTurnModifiers();
@@ -21,6 +33,7 @@ public class PlayerTurnHandler : ITurnHandler {
         if (deck != null) deck.DrawToHand();
         ctx.ChosenAction = PlayerAction.None;
         ctx.ChosenCardTitle = null;
+        ctx.ChosenCardArt = null;
         ctx.HeroLanded = false;
         ctx.CanAct = true;
         ctx.Log("Your turn.");
@@ -33,6 +46,8 @@ public class PlayerTurnHandler : ITurnHandler {
         ctx.ActiveSkill = skill;
         ctx.ChosenCardTitle = skill != null ? skill.Title
             : input.ChosenCombatCard != null ? input.ChosenCombatCard.Title : input.ChosenAction.ToString();
+        ctx.ChosenCardArt = skill != null ? skill.Art
+            : input.ChosenCombatCard != null ? input.ChosenCombatCard.Art : CoreCardArt(ctx, input.ChosenAction);
         if (input.ChosenCombatCard != null) input.ChosenCombatCard.Data.Apply(ctx);
         if (skill != null) {
             ctx.Cooldowns.Start(skill);

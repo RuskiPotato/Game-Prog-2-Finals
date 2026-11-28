@@ -14,7 +14,7 @@ public class BattleContext : ICheatHost
     public bool Defending;
 
     public int CardRollModifier { get; private set; }
-    public int CardExtraDice { get; private set; }
+    public int CardBonusDice { get; private set; }
     public int CardDamageBonus { get; private set; }
     public int CardDefendReduction { get; private set; }
 
@@ -30,6 +30,7 @@ public class BattleContext : ICheatHost
     // Current action.
     public PlayerAction ChosenAction;
     public string ChosenCardTitle;
+    public UnityEngine.Sprite ChosenCardArt;     // art of the card/skill the hero committed this turn
 
     // Opposed clash state.
     public bool HeroLanded;
@@ -59,7 +60,7 @@ public class BattleContext : ICheatHost
 
     // Preserve the original die calculation from your project.
     public int CurrentDice =>
-        Math.Max(1, Fate.TotalDice - RemovedMaliceDice - CardExtraDice);
+        Math.Max(1, Fate.TotalDice - RemovedMaliceDice);
 
     // Fortune is a free counter-roll while Destiny has at least one Malice die.
     // It is disabled during the deliberately scripted first encounter.
@@ -89,7 +90,7 @@ public class BattleContext : ICheatHost
         RemovedMaliceDice = 0;
 
         CardRollModifier = 0;
-        CardExtraDice = 0;
+        CardBonusDice = 0;
         CardDamageBonus = 0;
         CardDefendReduction = 0;
 
@@ -117,9 +118,12 @@ public class BattleContext : ICheatHost
         Changed?.Invoke();
     }
 
-    public void AddCardExtraDice(int value)
+    // Bonus card dice are rolled separately from the Malice pool.
+    // The Malice pool keeps its lowest die; the bonus pool can replace it
+    // only when a bonus die rolls higher.
+    public void AddCardBonusDice(int value)
     {
-        CardExtraDice += value;
+        CardBonusDice = Math.Max(0, CardBonusDice + value);
         Changed?.Invoke();
     }
 

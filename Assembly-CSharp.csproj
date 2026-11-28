@@ -67,6 +67,7 @@
     <Compile Include="Assets\Scripts\Core\Dice.cs" />
     <Compile Include="Assets\Scripts\Data\ClassData.cs" />
     <Compile Include="Assets\Scripts\Core\DiceService.cs" />
+    <Compile Include="Assets\Scripts\UI\UnitSpriteView.cs" />
     <Compile Include="Assets\Scripts\UI\CheatPanelView.cs" />
     <Compile Include="Assets\Scripts\Data\RunConfig.cs" />
     <Compile Include="Assets\Scripts\Battle\BattleHud.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Assets\Scripts\Battle\IBattleView.cs" />
     <Compile Include="Assets\Scripts\UI\HandView.cs" />
     <Compile Include="Assets\Scripts\Data\EnemyUnit.cs" />
+    <Compile Include="Assets\Scripts\UI\ExplorationMapController.cs" />
     <Compile Include="Assets\Scripts\Battle\EncounterOutcome.cs" />
     <Compile Include="Assets\Scripts\Data\EnemyMoveData.cs" />
     <Compile Include="Assets\Main menu with parallax FREE\Scripts\MenuController.cs" />
